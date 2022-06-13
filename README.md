@@ -1,7 +1,9 @@
 # Net Organizer
-Network Organizer enables you to bring some order to the chaos that might be your network. It enables you to take inventory of active hosts and to neatly classify each of them. It will also manage fixed IP reservations for you. It can convert dynamic IP or allocate a fixed IP reservation for classified hosts that do not have one. It can clean up lingering fixed IP reservations for un-classified and in-active hosts. It can bring to your attention un-classified hosts that are actively on your network and invite you to classify them. 
+Network Organizer enables you to bring some order to the chaos that might be your network. You could make the case that it is a lightweight IP Address Manager (IPAM). It enables you to take inventory of active hosts and to neatly classify each of them. It will also manage fixed IP reservations for you. It can convert dynamic IP or allocate a fixed IP reservation for classified hosts that do not have one. It can clean up lingering fixed IP reservations for un-classified and in-active hosts. It can bring to your attention un-classified hosts that are actively on your network and invite you to classify them. 
 
-Once hosts are classifed, you can export the details for use by other tools - for example, Cisco Secure Network Analytics
+Along the way, it avoids network collisions and avoids re-mapping exercises that can cause disruption to the users of the netwowk.
+
+Once hosts are classifed, you can export the device details for use by other tools - for example, Cisco Secure Network Analytics
 
 # Supports
 
