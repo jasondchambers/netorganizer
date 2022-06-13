@@ -3,7 +3,7 @@ Network Organizer enables you to bring some order to the chaos that might be you
 
 Along the way, it avoids network collisions and avoids disruptive re-mapping of the network space.
 
-Once hosts are classifed, you can export the device details for use by other tools - for example, Cisco Secure Network Analytics
+Once hosts are classifed, you can export the device details for use by other tools - for example, Cisco Secure Network Analytics.
 
 # Supports
 
