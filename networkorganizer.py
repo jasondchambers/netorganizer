@@ -4,6 +4,18 @@ from devicetableloader import DeviceTableLoader, DeviceTableLoaderException
 class NetworkOrganizerException(Exception) :
     pass
 
+#
+#    classified | existing reservation | existing client | Description                         | Action
+# ==============+======================+=================+=====================================+=======
+#             0 |                    0 |               0 | Unclassified & unreserved & inactive| N/A
+# aab         0 |                    0 |               1 | Unclassified & unreserved & active  | Ask user to classify 
+# aba         0 |                    1 |               0 | Unclassified & reserved & inactive  | Remove reservation
+# abb         0 |                    1 |               1 | Unclassified & reserved & active    | Ask user to classify
+# baa         1 |                    0 |               0 | Classified & unreserved & inactive  | Create reservation
+# bab         1 |                    0 |               1 | Classified & unreserved & active    | Convert to static reservation
+# bba         1 |                    1 |               0 | Classified & reserved & inactive    | No change
+# bbb         1 |                    1 |               1 | Classified & reserved & active      | No change
+
 class NetworkOrganizer :
 
     def load_device_table() -> DataFrame : 
