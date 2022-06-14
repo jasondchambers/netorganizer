@@ -33,7 +33,16 @@ class DeviceTableBuilder :
     def __init__(self) -> None:
         self.devices_dict = dict()
         
-    def get_details(self,mac) -> set:
+    def generate_new_record() -> dict:
+        return { 
+            'classified': False, 
+            'reserved': False, 
+            'active': False, 
+            'ip': '', 
+            'group': '', 
+            'name': ''}
+
+    def get_details(self,mac) -> dict:
         if mac in self.devices_dict:
             return self.devices_dict[mac]
         else:

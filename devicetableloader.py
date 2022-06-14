@@ -40,70 +40,53 @@ class DeviceTableLoader :
             print(f'Loading devices from {devices_yaml}')
             devices.load(devices_yaml)
             for device in devices.get_device_list() : 
-                self.device_table_builder.set_details(device['mac'], {
-                        'classified': True, 
-                        'reserved': False, 
-                        'active': False, 
-                        'ip': '', 
-                        'group': device['group'], 
-                        'name': device['name']})
+                # All we know at this point is the device is classified
+                record = DeviceTableBuilder.generate_new_record()
+                record['classified'] = True
+                record['group'] = device['group'] 
+                record['name'] = device['name']
+                self.device_table_builder.set_details(device['mac'], record)
         else :
             print(f'{devices_yaml} not found')
 
     def load_active_clients(self) : 
         active_clients = self.meraki_wrapper.get_device_clients_for_vlan()
         for active_client in active_clients :
-            classified_details = self.device_table_builder.get_details(active_client['mac'])
-            if len(classified_details):
-                # Is already classified - update it
-                record = {
-                        'classified': classified_details['classified'], # No change
-                        'reserved': classified_details['reserved'],     # No change
-                        'active': True,                                # Update this
-                        'ip': active_client['ip'],                     # Update this 
-                        'group': classified_details['group'],          # No change
-                        'name': classified_details['name']}            # No change
-                print(f'Updating record ip and active for {classified_details["name"]} {active_client["mac"]}')
+            record = self.device_table_builder.get_details(active_client['mac'])
+            if record:
+                # device has been loaded already
+                record['active'] = True
+                record['ip'] = active_client['ip'] 
+                print(f'Updating record ip and active for {record["name"]} {active_client["mac"]}')
                 self.device_table_builder.set_details(active_client['mac'], record)
             else:
-                # Is not classified - create new record in device table
-                record = {
-                        'classified': False, 
-                        'reserved': False, 
-                        'active': True, 
-                        'ip': active_client['ip'],
-                        'group': '',
-                        'name': active_client['description']}
-                print(f'Creating record for unclassified {active_client["description"]} {active_client["mac"]}')
+                # Seeing device for the first time
+                record = DeviceTableBuilder.generate_new_record()
+                record['active'] = True 
+                record['ip'] = active_client['ip']
+                record['name'] = active_client['description']
+                print(f'Creating record for unclassified {record["name"]} {active_client["mac"]}')
                 self.device_table_builder.set_details(active_client['mac'], record)
 
     def load_fixed_ip_reservations(self) :
         fixed_ip_reservations = self.meraki_wrapper.get_existing_reservatons()
         for mac, fixed_ip_reservation_details in fixed_ip_reservations.items():
-            device_details = self.device_table_builder.get_details(mac)
-            if len(device_details) : 
-                if (device_details['active']) :
-                    # Is active 
-                    record = {
-                            'classified': device_details['classified'], # No change
-                            'reserved': True,                           # Update this
-                            'active': device_details['active'],         # No change
-                            'ip': device_details['ip'],                 # No change
-                            'group': device_details['group'],           # No change
-                            'name': device_details['name']}             # No change
-                    print(f'Updating record reserved for {device_details["name"]} {mac}')
-                    self.device_table_builder.set_details(mac, record)
-                else :
+            record = self.device_table_builder.get_details(mac)
+            if record:
+                record['reserved'] = True
+                if (record['active'] == False) :
                     # Is in-active - has no IP so use the reserved IP
-                    record = {
-                            'classified': device_details['classified'], # No change
-                            'reserved': True,                           # Update this
-                            'active': device_details['active'],         # No change
-                            'ip': fixed_ip_reservation_details['ip'],   # Update this 
-                            'group': device_details['group'],           # No change
-                            'name': device_details['name']}             # No change
-                    print(f'Updating record ip reserved for {device_details["name"]} {mac}')
-                    self.device_table_builder.set_details(mac, record)
+                    record['ip'] = fixed_ip_reservation_details['ip']
+                print(f'Updating record reserved for {record["name"]} {mac}')
+                self.device_table_builder.set_details(mac, record)
+            else :
+                # Seeing device for the first time
+                record = DeviceTableBuilder.generate_new_record()
+                record['reserved'] = True
+                record['ip'] = fixed_ip_reservation_details['ip']
+                record['name'] = fixed_ip_reservation_details['name']
+                print(f'Creating record ip reserved for {record["name"]} {mac}')
+                self.device_table_builder.set_details(mac, record)
 
     def load_all(self) -> DataFrame :
         try:

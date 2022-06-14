@@ -35,7 +35,7 @@ try:
     unclassifed_df = df.loc[(df['classified'] == False)]
     no_fixed_ip_reservation_df = df.loc[(df['reserved'] == False)]
     inactive_df = df.loc[(df['active'] == False)]
-    classifed_df = df.loc[(df['classified'])] # TODO - fix if no classified hosts/devices.yml
+    classifed_df = df.loc[(df['classified'])] 
     has_fixed_ip_reservation_df = df.loc[(df['reserved'])]
     is_active_df = df.loc[(df['active'])]
     print(f'{df.shape[0]} devices')
