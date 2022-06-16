@@ -25,7 +25,6 @@ class DeviceTableLoader :
 
     def load_active_clients(self) : 
         active_clients = self.active_clients_loader.load() 
-        print(active_clients)
         for active_client in active_clients :
             record = self.device_table_builder.get_details(active_client['mac'])
             if record:

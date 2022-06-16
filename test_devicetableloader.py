@@ -58,6 +58,19 @@ class MockFixedIpReservationsLoader:
     def load(self) :
         return MockFixedIpReservationsLoader.dict
 
+class MockDuplicateMacClassifiedDevicesLoader:
+
+    list = [
+        # Duplicate MAC addresses
+        {'name': 'Meerkat',         'mac': 'aaa', 'group': 'servers'}, 
+        {'name': 'Office Printer',  'mac': 'aaa', 'group': 'printers'}]
+    
+    def get_list_of_macs() :
+        return [d['mac'] for d in MockDuplicateMacClassifiedDevicesLoader.list]
+
+    def load(self,filename='./devices.yml') -> list:
+        return MockDuplicateMacClassifiedDevicesLoader.list
+
 class DeviceTableLoaderTest(unittest.TestCase) :
     """Test cases for DeviceTableLoader."""
 
@@ -141,3 +154,12 @@ class DeviceTableLoaderTest(unittest.TestCase) :
         for mac in expected :
             self.assertIn(mac,actual)
         self.assertEqual(len(expected),len(actual))
+
+    def test_load_duplicate_mac_classified(self) :
+        mock_duplicate_mac_classified_devices_file_loader = MockDuplicateMacClassifiedDevicesLoader()
+        device_table_loader = DeviceTableLoader(mock_duplicate_mac_classified_devices_file_loader, None, None) 
+        device_table_loader.load_classified()
+        device_table = device_table_loader.device_table_builder.build()
+        # Although the loaded data has duplicate MACs, the way it is loaded - the last
+        # device wins and there will only be one MAC - hence it will be valid
+        self.assertTrue(device_table.is_valid())
