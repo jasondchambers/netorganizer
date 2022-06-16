@@ -10,18 +10,6 @@ from merakiwrapper import MerakiWrapper, MerakiWrapperException
 class NetworkOrganizerException(Exception) :
     pass
 
-#
-#    classified | existing reservation | existing client | Description                         | Action
-# ==============+======================+=================+=====================================+=======
-#             0 |                    0 |               0 | Unclassified & unreserved & inactive| N/A
-# aab         0 |                    0 |               1 | Unclassified & unreserved & active  | Ask user to classify 
-# aba         0 |                    1 |               0 | Unclassified & reserved & inactive  | Remove reservation
-# abb         0 |                    1 |               1 | Unclassified & reserved & active    | Ask user to classify
-# baa         1 |                    0 |               0 | Classified & unreserved & inactive  | Create reservation
-# bab         1 |                    0 |               1 | Classified & unreserved & active    | Convert to static reservation
-# bba         1 |                    1 |               0 | Classified & reserved & inactive    | No change
-# bbb         1 |                    1 |               1 | Classified & reserved & active      | No change
-
 def get_api_key() : 
     print ("You will need to obtain an API key. See the following for details:") 
     print ("https://developer.cisco.com/meraki/api-v1/#!authorization/obtaining-your-meraki-api-key") 
@@ -52,6 +40,7 @@ device_table_loader = DeviceTableLoader(
     meraki_active_clients_loader,
     meraki_fixed_ip_reservations_loader)
 df = device_table_loader.load_all() 
+print(df.query("classified and reserved"))
 unclassifed_df = df.loc[(df['classified'] == False)]
 no_fixed_ip_reservation_df = df.loc[(df['reserved'] == False)]
 inactive_df = df.loc[(df['active'] == False)]
