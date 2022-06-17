@@ -20,7 +20,7 @@ A __device__ can be __registered__ by you. Registered devices are configured in 
 
 A __device__ can be __active__ on the network. This means it has a current DHCP lease and therefore has an IP address.
 
-A __device__ can be __reserved__ where it has a fixed fixed IP reservation. This means it is granted the same static IP address each time it joins the network. 
+A __device__ can be __reserved__ where it has a fixed IP reservation. This means it is granted the same static IP address each time it joins the network. 
 
 ## How to register devices
 
