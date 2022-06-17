@@ -30,6 +30,7 @@ You don't need to write from scratch the devices.yml file. One can be generated 
 
 Here's an example:
 ```
+---
 devices:
   unclassified:
     - None,9a:1b:ba:d4:b6:54
