@@ -26,7 +26,7 @@ A __device__ can be __reserved__ where it has a fixed IP reservation. This means
 
 To register a device, you will need to capture the MAC address, provide a name for the device and classify it under a grouping. This is to be stored in a file called devices.yml in the current directory, although eventually I will make it more configurable. The devices.yml has to be valid [YAML](https://yaml.org).
 
-You don't need to write from scratch the devices.yml file. One can be generated for you to get you started based on devices that are currently active. There is no automated classification feature yet, and so it will put all the un-classified active devices it finds under "unclassified". You can classify them later if required.
+You don't need to write the devices.yml file from scratch. One can be generated for you to get you started based on devices that are currently active. There is no automated classification feature yet, and so it will put all the un-classified active devices it finds under "unclassified". You can classify them later if required.
 
 Here's an example:
 ```yaml
