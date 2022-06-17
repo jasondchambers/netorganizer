@@ -1,6 +1,7 @@
 import os.path
 import getpass
 from pandas import DataFrame
+from merakinetworkmapper import MerakiNetworkMapper
 from registereddevicesloader import RegisteredDevicesLoader
 from devicetableloader import DeviceTableLoader
 from registereddevicesgenerator import RegisteredDevicesGenerator
@@ -41,10 +42,18 @@ device_table_loader = DeviceTableLoader(
     meraki_active_clients_loader,
     meraki_fixed_ip_reservations_loader)
 device_table = device_table_loader.load_all() 
+
+# Generate devices.yml
 registered_devices_generator = RegisteredDevicesGenerator() 
 print(registered_devices_generator.generate(device_table))
 df = device_table.df
 print(df)
+
+# Map devices to the network space
+
+meraki_network_mapper = MerakiNetworkMapper(device_table,meraki_wrapper)
+meraki_network_mapper.map_devices_to_network_space()
+
 #print(df.query("registered and reserved"))
 #unregistered_df = df.loc[(df['registered'] == False)]
 #no_fixed_ip_reservation_df = df.loc[(df['reserved'] == False)]

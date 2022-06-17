@@ -7,14 +7,14 @@ from devicetableloader import DeviceTableLoader, DeviceTableLoaderException
 TEST_TABLE_SIZE = 7
 #    registered | reserved (IP) | active | Description                     | Action
 # ==============+===============+========+=================================+=======
-#             0 |             0 |      0 |                                 | N/A
-# aab         0 |             0 |      1 | active                          | Ask user to classify 
-# aba         0 |             1 |      0 | reserved                        | Remove reservation
-# abb         0 |             1 |      1 | reserved & active               | Ask user to classify
-# baa         1 |             0 |      0 | registered                      | Create reservation
-# bab         1 |             0 |      1 | registered & active             | Convert to static reservation
-# bba         1 |             1 |      0 | registered & reserved           | No change
-# bbb         1 |             1 |      1 | registered & reserved & active  | No change
+#             0 |             0 |      0 |                                 | 
+# aab         0 |             0 |      1 | active                          | register the device
+# aba         0 |             1 |      0 | reserved                        | remove reservation
+# abb         0 |             1 |      1 | reserved & active               | register the device
+# baa         1 |             0 |      0 | registered                      | create reservation
+# bab         1 |             0 |      1 | registered & active             | convert to static reservation
+# bba         1 |             1 |      0 | registered & reserved           | 
+# bbb         1 |             1 |      1 | registered & reserved & active  | 
 
 class MockRegisteredDevicesLoader:
 
@@ -107,6 +107,7 @@ class DeviceTableLoaderTest(unittest.TestCase) :
         mock_fixed_ip_reservations_loader = MockFixedIpReservationsLoader()
         device_table_loader = DeviceTableLoader(mock_registered_devices_file_loader, mock_active_clients_loader, mock_fixed_ip_reservations_loader) 
         df = device_table_loader.load_all().df
+        print(df)
         self.assertEqual(TEST_TABLE_SIZE,df.shape[0])
 
         # registered
