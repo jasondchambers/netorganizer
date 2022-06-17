@@ -29,7 +29,7 @@ To register a device, you will need to capture the MAC address, provide a name f
 You don't need to write from scratch the devices.yml file. One can be generated for you to get you started based on devices that are currently active. There is no automated classification feature yet, and so it will put all the un-classified active devices it finds under "unclassified". You can classify them later if required.
 
 Here's an example:
-```
+```yaml
 ---
 devices:
   unclassified:
@@ -39,7 +39,7 @@ devices:
 ```
 
 A more complete example may look like:
-```
+```yaml
 ---
 devices:
   servers:
