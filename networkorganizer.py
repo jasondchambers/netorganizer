@@ -1,7 +1,7 @@
 import os.path
 import getpass
 from pandas import DataFrame
-from classifieddevicesloader import ClassifiedDevicesLoader
+from registereddevicesloader import RegisteredDevicesLoader
 from devicetableloader import DeviceTableLoader, DeviceTableLoaderException
 from merakiactiveclientsloader import MerakiActiveClientsLoader
 from merakifixedipreservationsloader import MerakiFixedIpReservationsLoader
@@ -26,7 +26,7 @@ def choose_from_options(thing, choices) :
     return selection
 
 meraki_wrapper = MerakiWrapper(get_api_key(),choose_from_options) 
-classified_devices_loader = ClassifiedDevicesLoader()
+registered_devices_loader = RegisteredDevicesLoader()
 meraki_active_clients_loader = MerakiActiveClientsLoader(
     meraki_wrapper.dashboard,
     meraki_wrapper.serial_id,
@@ -36,20 +36,20 @@ meraki_fixed_ip_reservations_loader = MerakiFixedIpReservationsLoader(
     meraki_wrapper.network_id,
     meraki_wrapper.vlan_id)
 device_table_loader = DeviceTableLoader(
-    classified_devices_loader,
+    registered_devices_loader,
     meraki_active_clients_loader,
     meraki_fixed_ip_reservations_loader)
 df = device_table_loader.load_all() 
-print(df.query("classified and reserved"))
-unclassifed_df = df.loc[(df['classified'] == False)]
+print(df.query("registered and reserved"))
+unregistered_df = df.loc[(df['registered'] == False)]
 no_fixed_ip_reservation_df = df.loc[(df['reserved'] == False)]
 inactive_df = df.loc[(df['active'] == False)]
-classifed_df = df.loc[(df['classified'])] 
+registered_df = df.loc[(df['registered'])] 
 has_fixed_ip_reservation_df = df.loc[(df['reserved'])]
 is_active_df = df.loc[(df['active'])]
 print(f'{df.shape[0]} devices')
-print(f'{classifed_df.shape[0]} classified devices')
-print(f'{unclassifed_df.shape[0]} unclassified devices')
+print(f'{registered_df.shape[0]} registered devices')
+print(f'{unregistered_df.shape[0]} unregistered devices')
 print(f'{has_fixed_ip_reservation_df.shape[0]} devices have a fixed IP reservation')
 print(f'{no_fixed_ip_reservation_df.shape[0]} devices do not have a fixed IP reservation')
 print(f'{is_active_df.shape[0]} devices are active')

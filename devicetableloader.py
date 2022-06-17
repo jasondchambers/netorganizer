@@ -6,19 +6,19 @@ class DeviceTableLoaderException(Exception) :
 
 class DeviceTableLoader :
 
-    def __init__(self,classifed_devices_loader,active_clients_loader,fixed_ip_reservations_loader) -> None:
+    def __init__(self,registered_devices_loader,active_clients_loader,fixed_ip_reservations_loader) -> None:
         self.device_table_builder = DeviceTableBuilder() 
-        self.classified_devices_loader = classifed_devices_loader
+        self.registered_devices_loader = registered_devices_loader
         self.active_clients_loader = active_clients_loader
         self.fixed_ip_reservations_loader = fixed_ip_reservations_loader
 
 
-    def load_classified(self) -> None:
-        classified_devices = self.classified_devices_loader.load()
-        for device in classified_devices :
-            # All we know at this point is the device is classified
+    def load_registered(self) -> None:
+        registered_devices = self.registered_devices_loader.load()
+        for device in registered_devices :
+            # All we know at this point is the device is registered
             record = DeviceTableBuilder.generate_new_record()
-            record['classified'] = True
+            record['registered'] = True
             record['group'] = device['group'] 
             record['name'] = device['name']
             self.device_table_builder.set_details(device['mac'], record)
@@ -39,7 +39,7 @@ class DeviceTableLoader :
                 record['active'] = True 
                 record['ip'] = active_client['ip']
                 record['name'] = active_client['description']
-                print(f'Creating record for unclassified {record["name"]} {active_client["mac"]}')
+                print(f'Creating record for unregistered {record["name"]} {active_client["mac"]}')
                 self.device_table_builder.set_details(active_client['mac'], record)
 
     def load_fixed_ip_reservations(self) :
@@ -64,7 +64,7 @@ class DeviceTableLoader :
                     self.device_table_builder.set_details(mac, record)
 
     def load_all(self) -> DataFrame :
-        self.load_classified()
+        self.load_registered()
         self.load_active_clients()
         self.load_fixed_ip_reservations()
         device_table = self.device_table_builder.build()

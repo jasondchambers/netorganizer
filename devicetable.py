@@ -35,7 +35,7 @@ class DeviceTableBuilder :
         
     def generate_new_record() -> dict:
         return { 
-            'classified': False, 
+            'registered': False, 
             'reserved': False, 
             'active': False, 
             'ip': '', 

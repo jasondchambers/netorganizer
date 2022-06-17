@@ -1,12 +1,12 @@
 import os.path
 import yaml
 
-class ClassifiedDevicesLoader:
+class RegisteredDevicesLoader:
         
     def load(self,filename='./devices.yml') -> list:
         device_list = [] 
         if os.path.exists(filename) : 
-            print(f'Loading classified devices from {filename}') 
+            print(f'Loading registered devices from {filename}') 
             with open(filename) as f: 
                 data = yaml.load(f, Loader=yaml.FullLoader) 
                 devices = data['devices'] 
