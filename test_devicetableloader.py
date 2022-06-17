@@ -106,7 +106,7 @@ class DeviceTableLoaderTest(unittest.TestCase) :
         mock_active_clients_loader = MockActiveClientsLoader()
         mock_fixed_ip_reservations_loader = MockFixedIpReservationsLoader()
         device_table_loader = DeviceTableLoader(mock_registered_devices_file_loader, mock_active_clients_loader, mock_fixed_ip_reservations_loader) 
-        df = device_table_loader.load_all()
+        df = device_table_loader.load_all().df
         self.assertEqual(TEST_TABLE_SIZE,df.shape[0])
 
         # registered

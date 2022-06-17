@@ -67,10 +67,4 @@ class DeviceTableLoader :
         self.load_registered()
         self.load_active_clients()
         self.load_fixed_ip_reservations()
-        device_table = self.device_table_builder.build()
-        if device_table.is_valid() :
-            print("device table is valid")
-            return device_table.df
-        else :
-            print("device table is invalid") 
-            return device_table.df
+        return self.device_table_builder.build()

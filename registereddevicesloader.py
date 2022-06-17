@@ -23,3 +23,18 @@ class RegisteredDevicesLoader:
             print(f'{filename} not found') 
         return device_list
 
+    def load_from_string(self,str) -> list:
+        device_list = [] 
+        data = yaml.safe_load(str)
+        devices = data['devices'] 
+        device_group_names = devices.keys() 
+        for device_group_name in device_group_names: 
+            devices_in_group = devices[device_group_name] 
+            for device_in_group in devices_in_group: 
+                s = device_in_group.split(',') 
+                device_name = s[0] 
+                device_mac = s[1] 
+                device = {'name': device_name, 'mac': device_mac, 'group': device_group_name} 
+                device_list.append(device)
+        return device_list
+
