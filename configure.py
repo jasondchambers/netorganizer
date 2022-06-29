@@ -57,10 +57,12 @@ class NetorgConfigurator:
     def get_devices_yml_directory() -> str:
         """Obtain the directory for where to find/store registered devices"""
         default = os.getcwd()
-        device_yml_directory = input(f'Directory for where to find/store registered devices [{default}]: ')
-        if not device_yml_directory:
-            device_yml_directory = default
-        return device_yml_directory
+        while True:
+            device_yml_directory = input(f'Directory for where to find/store registered devices [{default}]: ')
+            if not device_yml_directory:
+                return default
+            if os.path.isdir(device_yml_directory):
+                return device_yml_directory
 
     @staticmethod
     def get_devices_yml_filename() -> str:
