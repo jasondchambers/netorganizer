@@ -1,3 +1,4 @@
+from merakifixedipreservationsgenerator import MerakiFixedIpReservationsGenerator
 from merakiwrapper import MerakiWrapper
 from ipv4privatenetworkspace import Ipv4PrivateNetworkSpace
 
@@ -25,12 +26,18 @@ class MerakiNetworkMapper() :
 
     def map_devices_to_network_space(self) :
         if self.device_table.has_unique_ips() : 
+            # Persist exising reservations
             ips = self.find_ips() 
             for ip in ips : 
                 self.network_space.allocate_specific_address(ip)
             macs_needing_ip = self.find_macs_needing_ip()
+            # Newly registered devices will need an IP address
             for mac in macs_needing_ip : 
                 self.assign_ip(mac)
-        # Needs some work - i.e. generate the fixedIP reservations 
+            # Now generate new set of fixedIP reservations - MerakiFixedIpReservationsGenerator
+            fixed_ip_reservations_generator = MerakiFixedIpReservationsGenerator()
+            fixed_ip_reservations = fixed_ip_reservations_generator.generate(self.device_table)
+            print(fixed_ip_reservations)
+            # Now tell Meraki
 
             
