@@ -10,6 +10,7 @@ def main():
     group.add_argument("-r", "--report", help="Produce a device report", action="store_true")
     args = parser.parse_args()
     configurator = NetorgConfigurator()
+    configurator.generate()
     configurator.save()
     #if args.configure:
         #print("Configure")

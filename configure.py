@@ -9,22 +9,15 @@ class NetorgConfigurator:
     """ALl things associated with configuring Netorg"""
 
     def __init__(self):
-        api_key = NetorgConfigurator.get_api_key()
-        meraki_wrapper = MerakiWrapper(api_key,NetorgConfigurator.choose_from_options)
         self.config = {}
-        self.config['api_key'] = api_key
-        self.config['devices_yml'] = NetorgConfigurator.get_devices_yml_path()
-        self.config['org_id'] = meraki_wrapper.org_id
-        self.config['network_id'] = meraki_wrapper.network_id
-        self.config['serial_id'] = meraki_wrapper.serial_id
-        self.config['vlan_id'] = meraki_wrapper.vlan_id
-        self.config['vlan_subnet'] = meraki_wrapper.vlan_subnet
 
-    def save(self):
-        """Save configuration."""
-        with open('netorg.cfg', 'w') as netorg_config_file:
-            netorg_config_file.write(json.dumps(self.config, indent=2))
-        print(self.config)
+    @staticmethod
+    def get_api_key() -> str:
+        """Obtain the Meraki API key from the user"""
+        print ("You will need to obtain an API key. See the following for details:")
+        print ("https://developer.cisco.com/meraki/api-v1/#!authorization/obtaining-your-meraki-api-key")
+        api_key = getpass.getpass('Meraki API key: ')
+        return api_key
 
     @staticmethod
     def choose_from_options(thing, choices) -> str:
@@ -37,13 +30,29 @@ class NetorgConfigurator:
                 break
         return selection
 
-    @staticmethod
-    def get_api_key() -> str:
-        """Obtain the Meraki API key from the user"""
-        print ("You will need to obtain an API key. See the following for details:")
-        print ("https://developer.cisco.com/meraki/api-v1/#!authorization/obtaining-your-meraki-api-key")
-        api_key = getpass.getpass('Meraki API key: ')
-        return api_key
+    def generate(self, get_api_key_func=get_api_key, choose_from_options_func=choose_from_options) -> None:
+        """Generate a configuration"""
+        api_key = get_api_key_func()
+        meraki_wrapper = MerakiWrapper(api_key,choose_from_options_func)
+        self.config = {}
+        self.config['api_key'] = api_key
+        self.config['devices_yml'] = NetorgConfigurator.get_devices_yml_path()
+        self.config['org_id'] = meraki_wrapper.org_id
+        self.config['network_id'] = meraki_wrapper.network_id
+        self.config['serial_id'] = meraki_wrapper.serial_id
+        self.config['vlan_id'] = meraki_wrapper.vlan_id
+        self.config['vlan_subnet'] = meraki_wrapper.vlan_subnet
+
+    def load(self) -> None:
+        """Load configuration."""
+        with open('netorg.cfg', encoding='utf8') as json_file:
+            self.config = json.load(json_file)
+
+    def save(self):
+        """Save configuration."""
+        if self.config:
+            with open('netorg.cfg', 'w', encoding='utf8') as netorg_config_file: 
+                netorg_config_file.write(json.dumps(self.config, indent=2))
 
     @staticmethod
     def get_devices_yml_path() -> str:
@@ -72,3 +81,12 @@ class NetorgConfigurator:
         if not device_yml_filename :
             device_yml_filename = default
         return device_yml_filename
+
+
+#netorg_configurator = NetorgConfigurator()
+#netorg_configurator.generate()
+#netorg_configurator.save()
+#netorg_configurator2 = NetorgConfigurator()
+#netorg_configurator2.load()
+
+
