@@ -11,6 +11,9 @@ class NetorgConfigurator:
     def __init__(self):
         self.config = {}
 
+    def get_config(self) -> dict:
+        return self.config
+
     @staticmethod
     def get_api_key() -> str:
         """Obtain the Meraki API key from the user"""
@@ -33,15 +36,16 @@ class NetorgConfigurator:
     def generate(self, get_api_key_func=get_api_key, choose_from_options_func=choose_from_options) -> None:
         """Generate a configuration"""
         api_key = get_api_key_func()
-        meraki_wrapper = MerakiWrapper(api_key,choose_from_options_func)
+        meraki_wrapper = MerakiWrapper(api_key)
+        meraki_wrapper.initialize(choose_from_options_func)
         self.config = {}
         self.config['api_key'] = api_key
         self.config['devices_yml'] = NetorgConfigurator.get_devices_yml_path()
-        self.config['org_id'] = meraki_wrapper.org_id
-        self.config['network_id'] = meraki_wrapper.network_id
-        self.config['serial_id'] = meraki_wrapper.serial_id
-        self.config['vlan_id'] = meraki_wrapper.vlan_id
-        self.config['vlan_subnet'] = meraki_wrapper.vlan_subnet
+        self.config['org_id'] = meraki_wrapper.get_org_id()
+        self.config['network_id'] = meraki_wrapper.get_network_id()
+        self.config['serial_id'] = meraki_wrapper.get_serial_id()
+        self.config['vlan_id'] = meraki_wrapper.get_vlan_id()
+        self.config['vlan_subnet'] = meraki_wrapper.get_vlan_subnet()
 
     def load(self) -> None:
         """Load configuration."""
@@ -50,9 +54,9 @@ class NetorgConfigurator:
 
     def save(self):
         """Save configuration."""
-        if self.config:
+        if self.get_config():
             with open('netorg.cfg', 'w', encoding='utf8') as netorg_config_file: 
-                netorg_config_file.write(json.dumps(self.config, indent=2))
+                netorg_config_file.write(json.dumps(self.get_config(), indent=2))
 
     @staticmethod
     def get_devices_yml_path() -> str:
