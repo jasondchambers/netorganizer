@@ -85,12 +85,3 @@ class NetorgConfigurator:
         if not device_yml_filename :
             device_yml_filename = default
         return device_yml_filename
-
-
-#netorg_configurator = NetorgConfigurator()
-#netorg_configurator.generate()
-#netorg_configurator.save()
-#netorg_configurator2 = NetorgConfigurator()
-#netorg_configurator2.load()
-
-
