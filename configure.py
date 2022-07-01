@@ -6,12 +6,13 @@ import json
 from merakiwrapper import MerakiWrapper
 
 class NetorgConfigurator:
-    """ALl things associated with configuring Netorg"""
+    """All things associated with configuring Netorg"""
 
     def __init__(self):
         self.config = {}
 
     def get_config(self) -> dict:
+        """Return the current config (may have either been generated or loaded)."""
         return self.config
 
     @staticmethod
