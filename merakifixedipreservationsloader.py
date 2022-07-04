@@ -6,6 +6,6 @@ class MerakiFixedIpReservationsLoader:
         self.vlan_id = vlan_id
 
     def load(self) :
-        vlan = self.dashboard.appliance.getNetworkApplianceVlan(self.network_id, self.vlan_id)
+        vlan = self.dashboard.appliance.getNetworkApplianceVlan(self.network_id, str(self.vlan_id))
         existing_reservations = vlan['fixedIpAssignments']
         return existing_reservations

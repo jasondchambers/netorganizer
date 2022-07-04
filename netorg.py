@@ -2,13 +2,14 @@
 import argparse
 from configure import NetorgConfigurator
 from report import NetorgReporter
+from generate import NetorgGenerator
 
 def main():
     """Figure out what the user wants to happen and make it so."""
     parser = argparse.ArgumentParser(description='Organize your network.')
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-c", "--configure", help="[Re-]Configure Netorg", action="store_true")
-    group.add_argument("-r", "--generate", help="Generate a devices.yml", action="store_true")
+    group.add_argument("-g", "--generate", help="Generate/update a devices.yml", action="store_true")
     group.add_argument("-r", "--discover", help="Produce a device report", action="store_true")
     args = parser.parse_args()
     if args.configure:
@@ -16,6 +17,13 @@ def main():
         configurator = NetorgConfigurator()
         configurator.generate()
         configurator.save()
+    elif args.generate:
+        print("Generate")
+        configurator = NetorgConfigurator()
+        configurator.load()
+        config = configurator.get_config()
+        generator = NetorgGenerator(config)
+        generator.generate()
     elif args.report:
         print("Report")
         configurator = NetorgConfigurator()

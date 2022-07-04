@@ -31,7 +31,7 @@ https://developer.cisco.com/meraki/api-v1/#!authorization/obtaining-your-meraki-
 
 Record the API key somewhere as you will be prompted for it during subsequent phases of the installation and configuration of netorganizer.
 
-### 1. Installation
+### 2. Installation
 
 This has been developed and tested for Python 3.10.5. Earlier versions may not work. Python 2 will certainly not work. All pip packages are installed in a separate virtual environment (venv). 
 
@@ -45,7 +45,7 @@ Run the install.sh script as follows:
 $ ./install.sh
 ```
 
-### 2. Configuration
+### 3. Configuration
 
 To get started, you will need to generate a netorg configuration file. It's just a JSON text file that resides in the user's home directory. Rather than create one by hand, you can generate one using the --configure flag as follows:
 
@@ -75,9 +75,11 @@ Saving config file /Users/bob/.netorg.cfg
 
 You shouldn't need to reconfigure netorganizer again unless you rotate your Meraki API Key and/or modify your network in anyway (e.g. different network settings, subnets, vlans, devices).
 
-## How to register devices
+### 4. Generate devices.yml
 
-To register a device, you will need to capture the MAC address, provide a name for the device and classify it under a grouping. This is to be stored in a file called devices.yml in the current directory, although eventually I will make it more configurable. The devices.yml has to be valid [YAML](https://yaml.org).
+Registered devices are devices known to you. They could be your smart phones, TVs, thermostats, speakers, appliances, tablets and of course laptops and PCs.
+
+To register a device, you will need to capture the MAC address, provide a name for the device and classify it under a grouping. This is to be stored in a file called devices.yml. The devices.yml has to be valid [YAML](https://yaml.org).
 
 You don't need to write the devices.yml file from scratch. One can be generated for you to get you started based on devices that are currently active. There is no automated classification feature yet, and so it will put all the un-classified active devices it finds under "unclassified". You can classify them later if required.
 
@@ -108,6 +110,15 @@ devices:
   kitchen_appliances:
     - Kitchen Appliances Fridge,68:a4:0e:2d:9a:91
 ```
+
+A devices.yml file can be generated as follows:
+
+```text
+$ netorg --generate
+```
+
+It saves off the generated devices.yml in the directory you specified during the configuration.
+If a devices.yml already exists, it merely updates it.
 
 # Supports
 

@@ -77,7 +77,7 @@ class NetorgConfigurator:
     @staticmethod
     def get_devices_yml_directory() -> str:
         """Obtain the directory for where to find/store registered devices"""
-        default = os.getcwd()
+        default = os.path.expanduser('~')
         while True:
             device_yml_directory = input(f'Directory for where to find/store registered devices [{default}]: ')
             if not device_yml_directory:
