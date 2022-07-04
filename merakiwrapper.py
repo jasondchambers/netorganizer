@@ -125,7 +125,7 @@ class MerakiWrapper :
     @staticmethod
     def find_vlan_subnet(dashboard,network_id,vlan_id) -> str:
         """Return the VLAN subnet."""
-        vlan = dashboard.appliance.getNetworkApplianceVlan(network_id, vlan_id)
+        vlan = dashboard.appliance.getNetworkApplianceVlan(network_id, str(vlan_id))
         return vlan['subnet']
 
     def __init__(self, api_key) :

@@ -48,15 +48,22 @@ class NetorgConfigurator:
         self.config['vlan_id'] = meraki_wrapper.get_vlan_id()
         self.config['vlan_subnet'] = meraki_wrapper.get_vlan_subnet()
 
+    def get_config_filename(self) -> str:
+        directory = os.path.expanduser('~')
+        filename = '.netorg.cfg'
+        return os.path.join(directory,filename)
+
     def load(self) -> None:
         """Load configuration."""
-        with open('netorg.cfg', encoding='utf8') as json_file:
+        print(f'Loading config file {self.get_config_filename()}')
+        with open(self.get_config_filename(), encoding='utf8') as json_file:
             self.config = json.load(json_file)
 
     def save(self):
         """Save configuration."""
         if self.get_config():
-            with open('netorg.cfg', 'w', encoding='utf8') as netorg_config_file: 
+            print(f'Saving config file {self.get_config_filename()}')
+            with open(self.get_config_filename(), 'w', encoding='utf8') as netorg_config_file: 
                 netorg_config_file.write(json.dumps(self.get_config(), indent=2))
 
     @staticmethod

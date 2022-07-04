@@ -22,6 +22,59 @@ A __device__ can be __active__ on the network. This means it has a current DHCP 
 
 A __device__ can be __reserved__ where it has a fixed IP reservation. This means it is granted the same static IP address each time it joins the network. 
 
+## How to get started
+
+### 1. Pre-installation
+
+You will need to obtain a Meraki API key. See the following for details:
+https://developer.cisco.com/meraki/api-v1/#!authorization/obtaining-your-meraki-api-key
+
+Record the API key somewhere as you will be prompted for it during subsequent phases of the installation and configuration of netorganizer.
+
+### 1. Installation
+
+This has been developed and tested for Python 3.10.5. Earlier versions may not work. Python 2 will certainly not work. All pip packages are installed in a separate virtual environment (venv). 
+
+Ensure the environment variable $NETORG_HOME is set to the directory where netorganizer is located.
+
+Ensure the PATH includes $NETORG_HOME.
+
+Run the install.sh script as follows:
+
+```shell
+$ ./install.sh
+```
+
+### 2. Configuration
+
+To get started, you will need to generate a netorg configuration file. It's just a JSON text file that resides in the user's home directory. Rather than create one by hand, you can generate one using the --configure flag as follows:
+
+```text
+$ netorg --configure
+Configure
+You will need to obtain an API key. See the following for details:
+https://developer.cisco.com/meraki/api-v1/#!authorization/obtaining-your-meraki-api-key
+Meraki API key: 
+Multiple networks found:
+1 - Nottingham Office
+2 - Mobile devices
+Which network? : 1
+Multiple devices found:
+1 - MX68 - Q2KY-XXXX-XXXX
+2 - MS120-8LP - Q2BX-XXXX-XXXX
+Which device? : 1
+Multiple VLANs found:
+1 - Default - 192.168.128.0/24
+2 - Lab - 192.168.4.0/24
+3 - Guest - 192.168.5.0/24
+Which VLAN? : 1
+Directory for where to find/store registered devices [/Users/bob/netorganizer]: 
+Filename for where to find/store registered devices [devices.yml]: 
+Saving config file /Users/bob/.netorg.cfg
+```
+
+You shouldn't need to reconfigure netorganizer again unless you rotate your Meraki API Key and/or modify your network in anyway (e.g. different network settings, subnets, vlans, devices).
+
 ## How to register devices
 
 To register a device, you will need to capture the MAC address, provide a name for the device and classify it under a grouping. This is to be stored in a file called devices.yml in the current directory, although eventually I will make it more configurable. The devices.yml has to be valid [YAML](https://yaml.org).

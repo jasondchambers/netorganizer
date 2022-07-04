@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+source ${NETORG_HOME}/.venv/bin/activate
+
+python3 ${NETORG_HOME}/netorg.py $*

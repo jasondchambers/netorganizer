@@ -8,7 +8,8 @@ def main():
     parser = argparse.ArgumentParser(description='Organize your network.')
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-c", "--configure", help="[Re-]Configure Netorg", action="store_true")
-    group.add_argument("-r", "--report", help="Produce a device report", action="store_true")
+    group.add_argument("-r", "--generate", help="Generate a devices.yml", action="store_true")
+    group.add_argument("-r", "--discover", help="Produce a device report", action="store_true")
     args = parser.parse_args()
     if args.configure:
         print("Configure")
