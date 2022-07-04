@@ -1,7 +1,7 @@
 """This is the main module for Netorg."""
 import argparse
 from configure import NetorgConfigurator
-from report import NetorgReporter
+from scan import NetorgScanner
 from generate import NetorgGenerator
 
 def main():
@@ -10,7 +10,7 @@ def main():
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-c", "--configure", help="[Re-]Configure Netorg", action="store_true")
     group.add_argument("-g", "--generate", help="Generate/update a devices.yml", action="store_true")
-    group.add_argument("-r", "--discover", help="Produce a device report", action="store_true")
+    group.add_argument("-s", "--scan", help="Scan to see what's active, registered, reserved", action="store_true")
     args = parser.parse_args()
     if args.configure:
         print("Configure")
@@ -24,13 +24,13 @@ def main():
         config = configurator.get_config()
         generator = NetorgGenerator(config)
         generator.generate()
-    elif args.report:
-        print("Report")
+    elif args.scan:
+        print("scan")
         configurator = NetorgConfigurator()
         configurator.load()
         config = configurator.get_config()
-        reporter = NetorgReporter(config)
-        print(reporter.device_table)
+        scanner = NetorgScanner(config)
+        scanner.report()
     else:
         print("Organize")
 
