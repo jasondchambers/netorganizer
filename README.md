@@ -93,7 +93,8 @@ devices:
     - Craigs-iPhone,6e:d9:36:a9:21:ee
 ```
 
-A more complete example may look like:
+You should consider classifying the devices as you see fit by editing the devices.yml file. Below is an example containing classified devices:
+
 ```yaml
 ---
 devices:
@@ -119,6 +120,55 @@ $ netorg --generate
 
 It saves off the generated devices.yml in the directory you specified during the configuration.
 If a devices.yml already exists, it merely updates it.
+
+### 4. Perform a scan
+
+The scan feature merely analyzes active devices on the network, the registered devices in the devices.yml and fixed IP reservations. 
+
+Here is an example:
+
+```text
+1 device(s) are active, not reserved and not registered. These will be registered as unclassified and assigned a reserved IP at the next sync:
+     Aura-6141
+1 device(s) are reserved, not active and not registered. The reserved IP will be removed at the next sync:
+     Jimmys Devices iPhone
+3 device(s) are active, reserved and not registered. These will be registered as un-classified at the next sync:
+     Smart Lighting Bar Light 1
+     Roses Devices MacBook
+     SONOS Connect CD
+1 device(s) are registered, not reserved and not active. A reserved IP will be created at the next sync:
+     Webcam
+11 device(s) are registered, active and not reserved. The current IP will be converted to a static IP at the next sync:
+     None
+     RingCamMini-11
+     JASCHAMB-M-XRDP
+     None
+     HS105
+     HS105
+     eero-20:be:cd:ac:37:20
+     LT6221
+     RingCamMini-d7
+     None
+     stratford-switch-0c8ddb0403b6
+14 device(s) are active and unclassified. You should consider classifying them before the next sync:
+     None
+     Roses Devices Kindle
+     SONOS Den
+     Ring base station
+     Echos Kitchen Echo Show
+     RingCamMini-11
+     Apple TVs K and J room
+     SONOS Bridge
+     SONOS Port HiFi
+     Eero Beacon Dining Room
+     Ring front door
+     Jasons Devices iMac
+     Arlo Camera
+     Echos Bar
+     SONOS Den LS
+```
+
+
 
 # Supports
 

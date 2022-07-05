@@ -33,16 +33,16 @@ class NetorgScanner:
 
     def report(self) :
         df = self.device_table.df
-        unregistered_df = df.loc[(df['registered'] == False)]
-        self.show_devices(unregistered_df, 'unregistered devices:')
-        registered_df = df.loc[(df['registered'])] 
-        self.show_devices(registered_df, 'registered devices:')
-        no_fixed_ip_reservation_df = df.loc[(df['reserved'] == False)]
-        self.show_devices(no_fixed_ip_reservation_df, 'devices do not have a fixed IP reservation:')
-        has_fixed_ip_reservation_df = df.loc[(df['reserved'])]
-        self.show_devices(has_fixed_ip_reservation_df , 'devices have a fixed IP reservation:')
-        inactive_df = df.loc[(df['active'] == False)]
-        self.show_devices(inactive_df, 'devices are inactive:')
-        is_active_df = df.loc[(df['active'])]
-        self.show_devices(is_active_df, 'devices are active:')
+        need_registration_and_reservation_df = df.query('active and not reserved and not registered')
+        self.show_devices(need_registration_and_reservation_df, 'device(s) are active, not reserved and not registered. These will be registered as unclassified and assigned a reserved IP at the next sync')
+        remove_reservation_df = df.query('reserved and not active and not registered')
+        self.show_devices(remove_reservation_df, 'device(s) are reserved, not active and not registered. The reserved IP will be removed at the next sync')
+        need_registration_df = df.query('active and reserved and not registered')
+        self.show_devices(need_registration_df, 'device(s) are active, reserved and not registered. These will be registered as un-classified at the next sync')
+        need_reservation_df = df.query('registered and not reserved and not active')
+        self.show_devices(need_reservation_df, 'device(s) are registered, not reserved and not active. A reserved IP will be created at the next sync')
+        convert_to_static_df = df.query('registered and active and not reserved')
+        self.show_devices(convert_to_static_df, 'device(s) are registered, active and not reserved. The current IP will be converted to a static IP at the next sync')
+        unclassified_df = df.query("active and group == 'unclassified'")
+        self.show_devices(unclassified_df, 'device(s) are active and unclassified. You should consider classifying them before the next sync')
 
