@@ -189,10 +189,11 @@ Here is an example:
      Echos Bar
      SONOS Den LS
 ```
-
-
-
 # Supports
 
 1. Cisco Meraki powered networks only (for now)
 2. IPv4 only (for now)
+
+# Internals
+
+![UML](netorg.png)

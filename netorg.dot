@@ -1,0 +1,38 @@
+digraph netorg_structure {
+
+    node [
+		fontname="Helvetica,Arial,sans-serif"
+		shape=record
+		style=filled
+		fillcolor=gray95
+	]
+    netorg -> { NetorgConfigurator NetorgGenerator NetorgScanner }
+    NetorgConfigurator -> { MerakiWrapper json }
+    NetorgGenerator -> { MerakiWrapper MerakiActiveClientsLoader MerakiFixedIpReservationsLoader RegisteredDevicesLoader DeviceTableLoader }
+    NetorgScanner -> { MerakiWrapper MerakiActiveClientsLoader MerakiFixedIpReservationsLoader RegisteredDevicesLoader DeviceTableLoader }
+    RegisteredDevicesLoader -> { yaml }
+    DeviceTableLoader -> { DeviceTableBuilder }
+    DeviceTableBuilder -> { DeviceTable }
+    edge [dir=back arrowtail=diamond style=dashed]
+    DeviceTable -> { DataFrame }
+
+    NetorgConfigurator[
+        label = <{<b>NetorgConfigurator</b> | + generate()<br align="left"/>+ load()<br align="left"/>+ save()<br align="left"/>}>
+    ]
+    
+    NetorgGenerator[
+        label = <{<b>NetorgGenerator</b> | + generate()<br align="left"/>}>
+    ]
+    
+    NetorgScanner[
+        label = <{<b>NetorgScanner</b> | + report()<br align="left"/>}>
+    ]
+    
+    DeviceTableLoader[
+        label = <{<b>DeviceTableLoader</b> | + load_registered()<br align="left"/>+ load_active_clients()<br align="left"/>+ load_fixed_ip_reservations()<br align="left"/>+ load_all()<br align="left"/>        }>
+    ]
+    
+    DataFrame [
+        label = <{pandas.DataFrame}>
+    ]
+}
