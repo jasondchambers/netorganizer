@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from registereddevicesgenerator import RegisteredDevicesGenerator
+from generate import RegisteredDevicesGenerator
 from devicetable import DeviceTableBuilder
 from registereddevicesloader import RegisteredDevicesLoader
 
