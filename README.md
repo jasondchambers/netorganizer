@@ -8,6 +8,28 @@ Along the way, it avoids network collisions and avoids disruptive re-mapping of 
 
 Once hosts are classifed, you can export the device details for use by other tools - for example, Cisco Secure Network Analytics.
 
+## Usage
+
+The --configure feature is required to get started and is also used if there are changes to the network configuration or API key.
+```bash
+$ netorg --configure
+```
+
+The --generate feature is used to generate the devices.yml file containing registered devices. This step can be re-run to update the devices.yml file taking into account any new devices that may have joined the network since the file was generated.
+```bash
+$ netorg --generate
+```
+
+The --scan feature merely analyzes active devices on the network, the registered devices in the devices.yml and fixed IP reservations. It reports on what it finds but doesn't take any action.
+```bash
+$ netorg --scan
+```
+
+The --organize feature performs a scan and executes any actions based on the findings from the scan. For example, fixed IP reservations that are no longer needed are removed. New fixed IP reservations are created where necessary. Devices are registered in the devices.yml if they do not exist yet are active.
+```bash
+$ netorg --organize
+```
+
 ## Terminology
 
 A __device__ is a host on the network. A Smart TV or a laptop are examples of devices.
@@ -16,7 +38,7 @@ A __device__ is uniquely identified by it's MAC address. Note that MAC randomiza
 
 There are 3 primary states for __device__. The states are __registered__, __active__ and __reserved__ and are described below. Note that these states are NOT mutually exclusive. For example, a __device__ could be __registered__ and __active__ but not __reserved__. Therefore, the total number of possible states a __device__ could be in is 7 (2 ^ 3 - 1). 
 
-A __device__ can be __registered__ by you. Registered devices are configured in a simple YAML text file. You may classify similar devices under a group - whatever makes sense for your network. Registered devices may be unclassified - you can manually classify these later. 
+A __device__ can be __registered__ by you. Registered devices are known devices on your network. Registered devices are configured in a simple YAML text file. You may classify similar devices under a group - whatever makes sense for your network. Registered devices may be unclassified - you can manually classify these later. 
 
 A __device__ can be __active__ on the network. This means it has a current DHCP lease and therefore has an IP address.
 
