@@ -3,7 +3,7 @@
 import os
 import getpass
 import json
-from merakiwrapper import MerakiWrapper
+from netorgmeraki import MerakiWrapper
 
 class NetorgConfigurator:
     """All things associated with configuring Netorg"""

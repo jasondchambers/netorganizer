@@ -1,5 +1,7 @@
-"""Meraki Dashboard API Wrapper."""
+
+
 import meraki
+from ipv4privatenetworkspace import Ipv4PrivateNetworkSpace
 
 class MerakiWrapperException(Exception) :
     pass
@@ -149,3 +151,87 @@ class MerakiWrapper :
         except meraki.exceptions.APIError as exc:
             print(f'Failed to initialize MerakiWrapper: {exc}')
             raise MerakiWrapperException from exc
+
+
+
+class MerakiActiveClientsLoader:
+    
+    def __init__(self,meraki_dashboard,serial_id, vlan_id) -> None:
+        self.dashboard = meraki_dashboard
+        self.serial_id = serial_id
+        self.vlan_id = vlan_id
+
+    def load(self) :
+        device_clients = self.dashboard.devices.getDeviceClients(self.serial_id)
+        filtered_for_vlan = [ device_client for device_client in device_clients if device_client['vlan'] == self.vlan_id]
+        return filtered_for_vlan
+
+
+
+class MerakiFixedIpReservationsGenerator : 
+        def generate(self,device_table) -> dict:
+                dict = {}
+                df = device_table.df
+                macs = df.mac.unique().tolist()
+                for mac in macs :
+                        device_df = df.query('mac == @mac')
+                        if device_df.shape[0] == 1:
+                                ip = device_df.iloc[0]['ip']
+                                name = device_df.iloc[0]['name']
+                                dict[mac] = { 
+                                        'ip': ip, 
+                                        'name': name}
+                return dict
+
+class MerakiFixedIpReservationsLoader:
+
+    def __init__(self,meraki_dashboard,network_id,vlan_id) -> None:
+        self.dashboard = meraki_dashboard
+        self.network_id = network_id
+        self.vlan_id = vlan_id
+
+    def load(self) :
+        vlan = self.dashboard.appliance.getNetworkApplianceVlan(self.network_id, str(self.vlan_id))
+        existing_reservations = vlan['fixedIpAssignments']
+        return existing_reservations
+
+class MerakiNetworkMapper : # TODO
+
+    def __init__(self, device_table, meraki_wrapper) -> None:
+        self.meraki_wrapper = meraki_wrapper
+        self.device_table = device_table
+        self.network_space = Ipv4PrivateNetworkSpace(meraki_wrapper.vlan_subnet)
+    
+    def find_ips(self) -> list:
+        df = self.device_table.df
+        #l = [ip for ip in df.ip.unique.tolist() if ip]
+        l = df.query("ip != ''")['ip'].tolist() 
+        return l
+
+    def find_macs_needing_ip(self) -> list:
+        df = self.device_table.df
+        l = df.query("ip == ''")['mac'].tolist() 
+        return l
+
+    def assign_ip(self,mac) : 
+        df = self.device_table.df
+        df.loc[df["mac"] == mac, "ip"] = self.network_space.allocate_address()
+
+    def map_devices_to_network_space(self) :
+        if self.device_table.has_unique_ips() : 
+            # Persist exising reservations
+            ips = self.find_ips() 
+            for ip in ips : 
+                self.network_space.allocate_specific_address(ip)
+            macs_needing_ip = self.find_macs_needing_ip()
+            # Newly registered devices will need an IP address
+            for mac in macs_needing_ip : 
+                self.assign_ip(mac)
+            # Now generate new set of fixedIP reservations - MerakiFixedIpReservationsGenerator
+            fixed_ip_reservations_generator = MerakiFixedIpReservationsGenerator()
+            fixed_ip_reservations = fixed_ip_reservations_generator.generate(self.device_table)
+            print(fixed_ip_reservations)
+            # Now tell Meraki
+            # TODO
+
+            

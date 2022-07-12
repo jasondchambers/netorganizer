@@ -1,10 +1,8 @@
 """This is the main module for Netorg generate."""
 
-from merakiwrapper import MerakiWrapper
+from netorgmeraki import MerakiWrapper, MerakiActiveClientsLoader, MerakiFixedIpReservationsLoader
 from registereddevicesloader import RegisteredDevicesLoader
-from merakiactiveclientsloader import MerakiActiveClientsLoader
-from merakifixedipreservationsloader import MerakiFixedIpReservationsLoader
-from devicetableloader import DeviceTableLoader
+from devicetable import DeviceTableLoader
 
 class NetorgGenerator:
     """All things associated with Netorg generate"""
