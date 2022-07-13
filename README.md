@@ -150,44 +150,92 @@ The scan feature merely analyzes active devices on the network, the registered d
 Here is an example:
 
 ```text
-1 device(s) are active, not reserved and not registered. These will be registered as unclassified and assigned a reserved IP at the next sync:
-     Aura-6141
-1 device(s) are reserved, not active and not registered. The reserved IP will be removed at the next sync:
-     Jimmys Devices iPhone
-3 device(s) are active, reserved and not registered. These will be registered as un-classified at the next sync:
-     Smart Lighting Bar Light 1
-     Roses Devices MacBook
-     SONOS Connect CD
-1 device(s) are registered, not reserved and not active. A reserved IP will be created at the next sync:
-     Webcam
-11 device(s) are registered, active and not reserved. The current IP will be converted to a static IP at the next sync:
-     None
-     RingCamMini-11
-     JASCHAMB-M-XRDP
-     None
-     HS105
-     HS105
-     eero-20:be:cd:ac:37:20
-     LT6221
-     RingCamMini-d7
-     None
+Did not find any devices that are: not registered and not reserved and active
+Did not find any devices that are: not registered and reserved and not active
+Did not find any devices that are: not registered and reserved and active
+Did not find any devices that are: registered and not reserved and not active
+Found 11 device(s) that are: registered and not reserved and active
+The current IP will be converted to a static IP during the next organize
+     Eero-eero-20:be:cd:ac:37:20
+     Jasons Devices work laptop-JASCHAMB-M-XRDP
+     Ring downstairs camera-RingCamMini-11
+     Ring upstairs camera-RingCamMini-d7
+     Smart Lighting Master left-HS105
+     Smart Lighting Master right-HS105
      stratford-switch-0c8ddb0403b6
-14 device(s) are active and unclassified. You should consider classifying them before the next sync:
-     None
-     Roses Devices Kindle
-     SONOS Den
-     Ring base station
-     Echos Kitchen Echo Show
-     RingCamMini-11
-     Apple TVs K and J room
-     SONOS Bridge
-     SONOS Port HiFi
+     Kitchen-Aura-6141
+     Unknown device 1
+     LT6221
+     Unkown device 3
+Found 12 device(s) that are: registered and reserved and not active
+These devices are currently inactive - no action will be taken during the next organize
+     Servers Linux
+     Printers Office
+     Jasons Devices iPad
+     Jasons Devices Apple Watch
+     Roses Devices Apple Watch
+     SONOS Mobile
+     Katies Devices Work laptop
+     Katies Devices iPad
+     Jimmys Devices iPhone
+     ISR 0/0/0 Management Interface
+     Jasons Devices work laptop (wired)
+     Jasons Devices work laptop
+Found 48 device(s) that are: registered and reserved and active
+Normal state - no action will be taken during the next organize
+     Printers Basement
+     Eero Beacon Lady Pit
+     Eero Beacon Family Room
+     Eero Office
      Eero Beacon Dining Room
-     Ring front door
+     Kitchen Appliances Fridge
+     Jasons Devices iPhone-11-Pro-Max
      Jasons Devices iMac
-     Arlo Camera
+     Echos Kitchen Echo Show
      Echos Bar
+     Echos Jason Office
+     Echos Master Bathroom
+     Ring backdoor
+     Ring base station
+     Ring front camera
+     Ring front door
+     Roses Devices iPad
+     Roses Devices Kindle
+     Roses Devices iPhone 2
+     Roses Devices iPhone 1
+     Roses Devices Work Laptop
+     Roses Devices MacBook
+     SONOS Bridge
+     SONOS Kitchen
+     SONOS Office
+     SONOS Port HiFi
+     SONOS Connect CD
+     SONOS Bedroom
+     SONOS Lady Pit
+     SONOS Sub
+     SONOS Den
      SONOS Den LS
+     SONOS Den RS
+     Thermostat Lower
+     Thermostat Upper
+     Smart Lighting Roses bed light
+     Smart Lighting Jasons bed light
+     Smart Lighting Den tall light
+     Smart Lighting Kitchen LED
+     Smart Lighting Bar Light 1
+     Smart Lighting Bar Light 2
+     Smart Lighting Jasons Desk Light
+     Smart Lighting Office Light
+     Apple TVs Den
+     Apple TVs K and J room
+     Apple TVs Guest Room
+     Samsung TV
+     Arlo Camera
+Found 3 device(s) that are: active and group == 'unclassified'
+You should consider classifying them before the next organize
+     Unknown device 1
+     LT6221
+     Unkown device 3
 ```
 # Supports
 
