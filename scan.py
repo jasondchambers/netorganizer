@@ -23,27 +23,62 @@ class NetorgScanner:
             meraki_active_clients_loader,
             meraki_fixed_ip_reservations_loader)
         self.device_table = device_table_loader.load_all()
+        self.analysis = {
+            'not_registered_not_reserved_ACTIVE': {
+                'query': 'not registered and not reserved and active',
+                'device_names': [],
+                'action': 'New device(s)? These will be registered as un-classified during the next organize'
+            },
+            'not_registered_RESERVED_not_active': {
+                'query': 'not registered and reserved and not active',
+                'device_names': [],
+                'action': 'Retired device(s)? The reserved IP will be removed during the next organize'
+            },
+            'not_registered_RESERVED_ACTIVE': {
+                'query': 'not registered and reserved and active',
+                'device_names': [],
+                'action': 'These will be registered as un-classified during the next organize'
+            },
+            'REGISTERED_not_reserved_not_active': {
+                'query': 'registered and not reserved and not active',
+                'device_names': [],
+                'action': 'A reserved IP will be created during the next organize'
+            },
+            'REGISTERED_not_reserved_ACTIVE': {
+                'query': 'registered and not reserved and active',
+                'device_names': [],
+                'action': 'The current IP will be converted to a static IP during the next organize'
+            },
+            'REGISTERED_RESERVED_not_active': {
+                'query': 'registered and reserved and not active',
+                'device_names': [],
+                'action': 'These devices are currently inactive - no action will be taken during the next organize'
+            },
+            'REGISTERED_RESERVED_ACTIVE': {
+                'query': 'registered and reserved and active',
+                'device_names': [],
+                'action': 'Normal state - no action will be taken during the next organize'
+            },
+            'ACTIVE_UNCLASSIFIED': {
+                'query': "active and group == 'unclassified'",
+                'device_names': [],
+                'action': 'You should consider classifying them before the next organize'
+            }
+        }
 
-    def show_devices(self,df,state,guidance) :
-        if df.shape[0] == 0:
-            print(f'Did not find any devices that are {state}.')
-        else:
-            print(f'{df.shape[0]} device(s) are {state}. {guidance}:')
-            for name in df['name']:
-                print(f'     {name}')
+    def run(self):
+        df = self.device_table.df
+        for k, v in self.analysis.items():
+            query_result_df = df.query(v['query'])
+            v['device_names'] = query_result_df['name'].values.tolist()
 
     def report(self) :
         df = self.device_table.df
-        need_registration_and_reservation_df = df.query('active and not reserved and not registered')
-        self.show_devices(need_registration_and_reservation_df, 'active, not reserved and not registered', 'These will be registered as unclassified and assigned a reserved IP at the next sync')
-        remove_reservation_df = df.query('reserved and not active and not registered')
-        self.show_devices(remove_reservation_df, 'reserved, not active and not registered', 'The reserved IP will be removed at the next sync')
-        need_registration_df = df.query('active and reserved and not registered')
-        self.show_devices(need_registration_df, 'active, reserved and not registered', 'These will be registered as un-classified at the next sync')
-        need_reservation_df = df.query('registered and not reserved and not active')
-        self.show_devices(need_reservation_df, 'registered, not reserved and not active', 'A reserved IP will be created at the next sync')
-        convert_to_static_df = df.query('registered and active and not reserved')
-        self.show_devices(convert_to_static_df, 'registered, active and not reserved', 'The current IP will be converted to a static IP at the next sync')
-        unclassified_df = df.query("active and group == 'unclassified'")
-        self.show_devices(unclassified_df, 'active and unclassified', 'You should consider classifying them before the next sync')
-
+        for k, v in self.analysis.items():
+            if len(v["device_names"]) == 0:
+                print(f'Did not find any devices that are: {v["query"]}') 
+            else:
+                print(f'Found {len(v["device_names"])} device(s) that are: {v["query"]}') 
+                print(f'{v["action"]}')
+                for device_name in v['device_names']:
+                    print(f'     {device_name}')

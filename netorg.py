@@ -32,6 +32,7 @@ def main():
         configurator.load()
         config = configurator.get_config()
         scanner = NetorgScanner(config)
+        scanner.run()
         scanner.report()
     elif args.organize:
         print("Organize")
