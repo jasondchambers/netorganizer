@@ -13,7 +13,7 @@ def load_device_table(config):
 def load_config():
     configurator = NetorgConfigurator()
     configurator.load()
-    config = configurator.get_config()
+    return configurator.get_config()
 
 def main():
     """Figure out what the user wants to happen and make it so."""
@@ -31,16 +31,15 @@ def main():
         configurator.save()
     elif args.generate:
         print("Generate")
+        config = load_config()
         device_table = load_device_table(config)
         generator = NetorgGenerator(config, device_table)
         generator.generate()
     elif args.scan:
         print("scan")
-        configurator = NetorgConfigurator()
-        configurator.load()
-        config = configurator.get_config()
+        config = load_config()
         device_table = load_device_table(config)
-        scanner = NetorgScanner(config, device_table)
+        scanner = NetorgScanner(device_table)
         scanner.run()
         scanner.report()
     elif args.organize:

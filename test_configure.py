@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch
 from configure import NetorgConfigurator
 
-class NetorgConfiguratorTest(unittest.TestCase) :
+class TestNetorgConfigurator(unittest.TestCase) :
     """Tests for NetorgConfigurator"""
 
     @patch('configure.NetorgConfigurator.get_config_filename')

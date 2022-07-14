@@ -3,7 +3,7 @@
 class NetorgScanner:
     """All things associated with Netorg scanning"""
 
-    def __init__(self, config, device_table):
+    def __init__(self, device_table):
         self.device_table = device_table
         self.analysis = {
             'not_known_not_reserved_ACTIVE': {
