@@ -1,7 +1,7 @@
 """This is the main module for Netorg generate."""
 
 from netorgmeraki import MerakiWrapper, MerakiActiveClientsLoader, MerakiFixedIpReservationsLoader
-from registereddevicesloader import RegisteredDevicesLoader
+from knowndevicesloader import KnownDevicesLoader
 from devicetable import DeviceTableLoader
 
 class NetorgGenerator:
@@ -9,7 +9,7 @@ class NetorgGenerator:
 
     def __init__(self, config):
         meraki_wrapper = MerakiWrapper(config['api_key'])
-        registered_devices_loader = RegisteredDevicesLoader(config['devices_yml'])
+        known_devices_loader = KnownDevicesLoader(config['devices_yml'])
         meraki_active_clients_loader = MerakiActiveClientsLoader(
             meraki_wrapper.dashboard,
             config['serial_id'],
@@ -19,20 +19,20 @@ class NetorgGenerator:
             config['network_id'],
             config['vlan_id'])
         device_table_loader = DeviceTableLoader(
-            registered_devices_loader,
+            known_devices_loader,
             meraki_active_clients_loader,
             meraki_fixed_ip_reservations_loader)
         self.device_table = device_table_loader.load_all()
         self.devices_yml_path = config['devices_yml']
 
     def generate(self) :
-        registered_devices_generator = RegisteredDevicesGenerator() 
+        known_devices_generator = KnownDevicesGenerator() 
         print(f'Generating devices.yml file at {self.devices_yml_path}')
         with open(self.devices_yml_path, 'w', encoding='utf8') as devices_yml_file:
-            devices_yml_file.write(registered_devices_generator.generate(self.device_table))
+            devices_yml_file.write(known_devices_generator.generate(self.device_table))
 
 
-class RegisteredDevicesGenerator:
+class KnownDevicesGenerator:
 
     def get_devices_in_group(self,df,group) -> list :
         l = []
@@ -50,7 +50,7 @@ class RegisteredDevicesGenerator:
         groups = self.get_groups(df)
         for group_name in groups :
             if group_name == "" : 
-                # Classify unregistered devices as unclassified
+                # Classify unknown devices as unclassified
                 yaml_lines.append("  unclassified:")
             else : 
                 yaml_lines.append(f'  {group_name}:')

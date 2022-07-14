@@ -36,7 +36,7 @@ class DeviceTableBuilder :
         
     def generate_new_record() -> dict:
         return { 
-            'registered': False, 
+            'known': False, 
             'reserved': False, 
             'active': False, 
             'ip': '', 
@@ -66,19 +66,19 @@ class DeviceTableLoaderException(Exception) :
 
 class DeviceTableLoader :
 
-    def __init__(self,registered_devices_loader,active_clients_loader,fixed_ip_reservations_loader) -> None:
+    def __init__(self,known_devices_loader,active_clients_loader,fixed_ip_reservations_loader) -> None:
         self.device_table_builder = DeviceTableBuilder() 
-        self.registered_devices_loader = registered_devices_loader
+        self.known_devices_loader = known_devices_loader
         self.active_clients_loader = active_clients_loader
         self.fixed_ip_reservations_loader = fixed_ip_reservations_loader
 
 
-    def load_registered(self) -> None:
-        registered_devices = self.registered_devices_loader.load()
-        for device in registered_devices :
-            # All we know at this point is the device is registered
+    def load_known(self) -> None:
+        known_devices = self.known_devices_loader.load()
+        for device in known_devices :
+            # All we know at this point is the device is known
             record = DeviceTableBuilder.generate_new_record()
-            record['registered'] = True
+            record['known'] = True
             record['group'] = device['group'] 
             record['name'] = device['name']
             self.device_table_builder.set_details(device['mac'], record)
@@ -99,7 +99,7 @@ class DeviceTableLoader :
                 record['active'] = True 
                 record['ip'] = active_client['ip']
                 record['name'] = active_client['description']
-                print(f'Creating record for unregistered {record["name"]} {active_client["mac"]}')
+                print(f'Creating record for unknown {record["name"]} {active_client["mac"]}')
                 self.device_table_builder.set_details(active_client['mac'], record)
 
     def load_fixed_ip_reservations(self) :
@@ -124,7 +124,7 @@ class DeviceTableLoader :
                     self.device_table_builder.set_details(mac, record)
 
     def load_all(self) -> DataFrame :
-        self.load_registered()
+        self.load_known()
         self.load_active_clients()
         self.load_fixed_ip_reservations()
         return self.device_table_builder.build()

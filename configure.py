@@ -68,7 +68,7 @@ class NetorgConfigurator:
 
     @staticmethod
     def get_devices_yml_path() -> str:
-        """Obtain the fully qualified pathname for where to find/store registered devices"""
+        """Obtain the fully qualified pathname for where to find/store known devices"""
         directory = NetorgConfigurator.get_devices_yml_directory()
         filename = NetorgConfigurator.get_devices_yml_filename()
         full_path = os.path.join(directory,filename)
@@ -76,10 +76,10 @@ class NetorgConfigurator:
 
     @staticmethod
     def get_devices_yml_directory() -> str:
-        """Obtain the directory for where to find/store registered devices"""
+        """Obtain the directory for where to find/store known devices"""
         default = os.path.expanduser('~')
         while True:
-            device_yml_directory = input(f'Directory for where to find/store registered devices [{default}]: ')
+            device_yml_directory = input(f'Directory for where to find/store known devices [{default}]: ')
             if not device_yml_directory:
                 return default
             if os.path.isdir(device_yml_directory):
@@ -87,9 +87,9 @@ class NetorgConfigurator:
 
     @staticmethod
     def get_devices_yml_filename() -> str:
-        """Obtain the filename for where to find/store registered devices"""
+        """Obtain the filename for where to find/store known devices"""
         default = 'devices.yml'
-        device_yml_filename = input(f'Filename for where to find/store registered devices [{default}]: ')
+        device_yml_filename = input(f'Filename for where to find/store known devices [{default}]: ')
         if not device_yml_filename :
             device_yml_filename = default
         return device_yml_filename

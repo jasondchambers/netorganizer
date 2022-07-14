@@ -1,7 +1,7 @@
 """This is the main module for Netorg scanning."""
 
 from netorgmeraki import MerakiWrapper, MerakiActiveClientsLoader, MerakiFixedIpReservationsLoader
-from registereddevicesloader import RegisteredDevicesLoader
+from knowndevicesloader import KnownDevicesLoader
 from devicetable import DeviceTableLoader
 
 class NetorgScanner:
@@ -9,7 +9,7 @@ class NetorgScanner:
 
     def __init__(self, config):
         meraki_wrapper = MerakiWrapper(config['api_key'])
-        registered_devices_loader = RegisteredDevicesLoader(config['devices_yml'])
+        known_devices_loader = KnownDevicesLoader(config['devices_yml'])
         meraki_active_clients_loader = MerakiActiveClientsLoader(
             meraki_wrapper.dashboard,
             config['serial_id'],
@@ -19,43 +19,43 @@ class NetorgScanner:
             config['network_id'],
             config['vlan_id'])
         device_table_loader = DeviceTableLoader(
-            registered_devices_loader,
+            known_devices_loader,
             meraki_active_clients_loader,
             meraki_fixed_ip_reservations_loader)
         self.device_table = device_table_loader.load_all()
         self.analysis = {
-            'not_registered_not_reserved_ACTIVE': {
-                'query': 'not registered and not reserved and active',
+            'not_known_not_reserved_ACTIVE': {
+                'query': 'not known and not reserved and active',
                 'device_names': [],
-                'action': 'New device(s)? These will be registered as un-classified during the next organize'
+                'action': 'New device(s)? These will be known as un-classified during the next organize'
             },
-            'not_registered_RESERVED_not_active': {
-                'query': 'not registered and reserved and not active',
+            'not_known_RESERVED_not_active': {
+                'query': 'not known and reserved and not active',
                 'device_names': [],
                 'action': 'Retired device(s)? The reserved IP will be removed during the next organize'
             },
-            'not_registered_RESERVED_ACTIVE': {
-                'query': 'not registered and reserved and active',
+            'not_known_RESERVED_ACTIVE': {
+                'query': 'not known and reserved and active',
                 'device_names': [],
-                'action': 'These will be registered as un-classified during the next organize'
+                'action': 'These will be known as un-classified during the next organize'
             },
-            'REGISTERED_not_reserved_not_active': {
-                'query': 'registered and not reserved and not active',
+            'KNOWN_not_reserved_not_active': {
+                'query': 'known and not reserved and not active',
                 'device_names': [],
                 'action': 'A reserved IP will be created during the next organize'
             },
-            'REGISTERED_not_reserved_ACTIVE': {
-                'query': 'registered and not reserved and active',
+            'KNOWN_not_reserved_ACTIVE': {
+                'query': 'known and not reserved and active',
                 'device_names': [],
                 'action': 'The current IP will be converted to a static IP during the next organize'
             },
-            'REGISTERED_RESERVED_not_active': {
-                'query': 'registered and reserved and not active',
+            'KNOWN_RESERVED_not_active': {
+                'query': 'known and reserved and not active',
                 'device_names': [],
                 'action': 'These devices are currently inactive - no action will be taken during the next organize'
             },
-            'REGISTERED_RESERVED_ACTIVE': {
-                'query': 'registered and reserved and active',
+            'KNOWN_RESERVED_ACTIVE': {
+                'query': 'known and reserved and active',
                 'device_names': [],
                 'action': 'Normal state - no action will be taken during the next organize'
             },

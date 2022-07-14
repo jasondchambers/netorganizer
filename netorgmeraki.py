@@ -224,7 +224,7 @@ class MerakiNetworkMapper : # TODO
             for ip in ips : 
                 self.network_space.allocate_specific_address(ip)
             macs_needing_ip = self.find_macs_needing_ip()
-            # Newly registered devices will need an IP address
+            # Newly discovered devices will need an IP address
             for mac in macs_needing_ip : 
                 self.assign_ip(mac)
             # Now generate new set of fixedIP reservations - MerakiFixedIpReservationsGenerator

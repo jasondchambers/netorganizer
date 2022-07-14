@@ -2,7 +2,7 @@
 
 Not yet releasable. Still very much under development!
 
-Network Organizer enables you to bring some order to the chaos that might be your network. It is essentially a simple IP Address Manager (IPAM). It enables you to take inventory of active hosts and to neatly classify each of them into groups. It will also manage fixed IP reservations for you. It can convert a dynamic IP or allocate a new fixed IP reservation for registered hosts that do not have one. It can clean up lingering fixed IP reservations for un-registered and in-active hosts. It can bring to your attention un-registered hosts that are active on your network and invite you to register and classify them. 
+Network Organizer enables you to bring some order to the chaos that might be your network. It is essentially a simple IP Address Manager (IPAM). It enables you to take inventory of active hosts and to neatly classify each of them into groups. It will also manage fixed IP reservations for you. It can convert a dynamic IP or allocate a new fixed IP reservation for known hosts that do not have one. It can clean up lingering fixed IP reservations for unknown and in-active hosts. It can bring to your attention unknown hosts that are active on your network and invite you to classify them. 
 
 Along the way, it avoids network collisions and avoids disruptive re-mapping of the network space.
 
@@ -15,17 +15,17 @@ The --configure feature is required to get started and is also used if there are
 $ netorg --configure
 ```
 
-The --generate feature is used to generate the devices.yml file containing registered devices. This step can be re-run to update the devices.yml file taking into account any new devices that may have joined the network since the file was generated.
+The --generate feature is used to generate the devices.yml file containing known devices. This step can be re-run to update the devices.yml file taking into account any new devices that may have joined the network since the file was generated.
 ```bash
 $ netorg --generate
 ```
 
-The --scan feature merely analyzes active devices on the network, the registered devices in the devices.yml and fixed IP reservations. It reports on what it finds but doesn't take any action.
+The --scan feature merely analyzes active devices on the network, the known devices in the devices.yml and fixed IP reservations. It reports on what it finds but doesn't take any action.
 ```bash
 $ netorg --scan
 ```
 
-The --organize feature performs a scan and executes any actions based on the findings from the scan. For example, fixed IP reservations that are no longer needed are removed. New fixed IP reservations are created where necessary. Devices are registered in the devices.yml if they do not exist yet are active.
+The --organize feature performs a scan and executes any actions based on the findings from the scan. For example, fixed IP reservations that are no longer needed are removed. New fixed IP reservations are created where necessary. Newly discovered devices are registered in the devices.yml.
 ```bash
 $ netorg --organize
 ```
@@ -36,13 +36,13 @@ A __device__ is a host on the network. A Smart TV or a laptop are examples of de
 
 A __device__ is uniquely identified by it's MAC address. Note that MAC randomization has become popular with various devices to enhance privacy. MAC address randomization is an effective way to maintain privacy in public settings, where you don’t know who is looking at your connectivity and location history. But it does create challenges for managing your own network. It is recommended to turn off this feature when connecting to your own managed network, but by all means use the feature when joining public WiFi.
 
-There are 3 primary states for __device__. The states are __registered__, __active__ and __reserved__ and are described below. Note that these states are NOT mutually exclusive. For example, a __device__ could be __registered__ and __active__ but not __reserved__. Therefore, the total number of possible states a __device__ could be in is 7 (2 ^ 3 - 1). 
+There are 3 primary states for a device. The states are __known__, __active__ and __reserved__ and are described below. Note that these states are NOT mutually exclusive. For example, a device could be __known__ and __active__ but not __reserved__. Therefore, the total number of possible states a device could be in is 7 (2 ^ 3 - 1). 
 
-A __device__ can be __registered__ by you. Registered devices are known devices on your network. Registered devices are configured in a simple YAML text file. You may classify similar devices under a group - whatever makes sense for your network. Registered devices may be unclassified - you can manually classify these later. 
+__Known__ devices are registered in a simple YAML text file. You may classify similar devices under a group - whatever makes sense for your network. Known devices may be unclassified - you can manually classify these later. 
 
-A __device__ can be __active__ on the network. This means it has a current DHCP lease and therefore has an IP address.
+A device can be __active__ on the network. This means it has a current DHCP lease and therefore has an IP address.
 
-A __device__ can be __reserved__ where it has a fixed IP reservation. This means it is granted the same static IP address each time it joins the network. 
+A device can be __reserved__ where it has a fixed IP reservation. This means it is granted the same static IP address each time it joins the network. 
 
 ## How to get started
 
@@ -87,11 +87,11 @@ Multiple devices found:
 Which device? : 1
 Multiple VLANs found:
 1 - Default - 192.168.128.0/24
-2 - Lab - 192.168.4.0/24
-3 - Guest - 192.168.5.0/24
+2 - CIMC - 192.168.4.0/24
+3 - ENCS - 192.168.5.0/24
 Which VLAN? : 1
-Directory for where to find/store registered devices [/Users/bob/netorganizer]: 
-Filename for where to find/store registered devices [devices.yml]: 
+Directory for where to find/store known devices [/Users/bob]: 
+Filename for where to find/store known devices [devices.yml]: 
 Saving config file /Users/bob/.netorg.cfg
 ```
 
@@ -99,9 +99,9 @@ You shouldn't need to reconfigure netorganizer again unless you rotate your Mera
 
 ### 4. Generate devices.yml
 
-Registered devices are devices known to you. They could be your smart phones, TVs, thermostats, speakers, appliances, tablets and of course laptops and PCs.
+Known devices are devices that you are aware of on your network. They could be your smart phones, TVs, thermostats, speakers, appliances, tablets and of course laptops and PCs.
 
-To register a device, you will need to capture the MAC address, provide a name for the device and classify it under a grouping. This is to be stored in a file called devices.yml. The devices.yml has to be valid [YAML](https://yaml.org).
+To register a known device, you will need to capture the MAC address, provide a name for the device and classify it under a grouping. This is to be stored in a file called devices.yml. The devices.yml has to be valid [YAML](https://yaml.org).
 
 You don't need to write the devices.yml file from scratch. One can be generated for you to get you started based on devices that are currently active. There is no automated classification feature yet, and so it will put all the un-classified active devices it finds under "unclassified". You can classify them later if required.
 
@@ -145,16 +145,18 @@ If a devices.yml already exists, it merely updates it.
 
 ### 4. Perform a scan
 
-The scan feature merely analyzes active devices on the network, the registered devices in the devices.yml and fixed IP reservations. 
+The scan feature merely analyzes active devices on the network, the known devices in the devices.yml and fixed IP reservations. 
 
 Here is an example:
 
 ```text
-Did not find any devices that are: not registered and not reserved and active
-Did not find any devices that are: not registered and reserved and not active
-Did not find any devices that are: not registered and reserved and active
-Did not find any devices that are: registered and not reserved and not active
-Found 11 device(s) that are: registered and not reserved and active
+Did not find any devices that are: not known and not reserved and active
+Did not find any devices that are: not known and reserved and not active
+Did not find any devices that are: not known and reserved and active
+Found 1 device(s) that are: known and not reserved and not active
+A reserved IP will be created during the next organize
+     None
+Found 11 device(s) that are: known and not reserved and active
 The current IP will be converted to a static IP during the next organize
      Eero-eero-20:be:cd:ac:37:20
      Jasons Devices work laptop-JASCHAMB-M-XRDP
@@ -164,10 +166,10 @@ The current IP will be converted to a static IP during the next organize
      Smart Lighting Master right-HS105
      stratford-switch-0c8ddb0403b6
      Kitchen-Aura-6141
-     Unknown device 1
+     None
      LT6221
-     Unkown device 3
-Found 12 device(s) that are: registered and reserved and not active
+     None
+Found 13 device(s) that are: known and reserved and not active
 These devices are currently inactive - no action will be taken during the next organize
      Servers Linux
      Printers Office
@@ -175,13 +177,14 @@ These devices are currently inactive - no action will be taken during the next o
      Jasons Devices Apple Watch
      Roses Devices Apple Watch
      SONOS Mobile
+     Samsung TV
      Katies Devices Work laptop
      Katies Devices iPad
      Jimmys Devices iPhone
      ISR 0/0/0 Management Interface
      Jasons Devices work laptop (wired)
      Jasons Devices work laptop
-Found 48 device(s) that are: registered and reserved and active
+Found 47 device(s) that are: known and reserved and active
 Normal state - no action will be taken during the next organize
      Printers Basement
      Eero Beacon Lady Pit
@@ -229,13 +232,12 @@ Normal state - no action will be taken during the next organize
      Apple TVs Den
      Apple TVs K and J room
      Apple TVs Guest Room
-     Samsung TV
      Arlo Camera
 Found 3 device(s) that are: active and group == 'unclassified'
 You should consider classifying them before the next organize
-     Unknown device 1
+     None
      LT6221
-     Unkown device 3
+     None
 ```
 # Supports
 

@@ -1,17 +1,17 @@
 import os.path
 import yaml
 
-class RegisteredDevicesLoader:
-    """Load the file containing registered devices."""
+class KnownDevicesLoader:
+    """Load the file containing known devices."""
         
     def __init__(self,filename='./devices.yml') -> None:
         self.filename = filename
 
     def load(self) -> list:
-        """Load the file containing registered devices."""
+        """Load the file containing known devices."""
         device_list = []
         if os.path.exists(self.filename) :
-            print(f'Loading registered devices from {self.filename}')
+            print(f'Loading known devices from {self.filename}')
             with open(self.filename) as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
                 devices = data['devices'] 

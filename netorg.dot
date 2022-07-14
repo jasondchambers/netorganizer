@@ -8,9 +8,9 @@ digraph netorg_structure {
 	]
     netorg -> { NetorgConfigurator NetorgGenerator NetorgScanner }
     NetorgConfigurator -> { MerakiWrapper json }
-    NetorgGenerator -> { MerakiWrapper MerakiActiveClientsLoader MerakiFixedIpReservationsLoader RegisteredDevicesLoader DeviceTableLoader }
-    NetorgScanner -> { MerakiWrapper MerakiActiveClientsLoader MerakiFixedIpReservationsLoader RegisteredDevicesLoader DeviceTableLoader }
-    RegisteredDevicesLoader -> { yaml }
+    NetorgGenerator -> { MerakiWrapper MerakiActiveClientsLoader MerakiFixedIpReservationsLoader KnownDevicesLoader DeviceTableLoader }
+    NetorgScanner -> { MerakiWrapper MerakiActiveClientsLoader MerakiFixedIpReservationsLoader KnownDevicesLoader DeviceTableLoader }
+    KnownDevicesLoader -> { yaml }
     DeviceTableLoader -> { DeviceTableBuilder }
     DeviceTableBuilder -> { DeviceTable }
     edge [dir=back arrowtail=diamond style=dashed]
