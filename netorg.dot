@@ -6,16 +6,21 @@ digraph netorg_structure {
 		style=filled
 		fillcolor=gray95
 	]
-    netorg -> { NetorgConfigurator NetorgGenerator NetorgScanner }
+    netorg -> { MerakiDeviceTableLoaderFactory NetorgConfigurator NetorgGenerator NetorgScanner }
+    MerakiDeviceTableLoaderFactory -> { DeviceTableLoader KnownDevicesLoader MerakiActiveClientsLoader MerakiFixedIpReservationsLoader MerakiWrapper}
     NetorgConfigurator -> { MerakiWrapper json }
-    NetorgGenerator -> { MerakiWrapper MerakiActiveClientsLoader MerakiFixedIpReservationsLoader KnownDevicesLoader DeviceTableLoader }
-    NetorgScanner -> { MerakiWrapper MerakiActiveClientsLoader MerakiFixedIpReservationsLoader KnownDevicesLoader DeviceTableLoader }
+    NetorgGenerator -> { DeviceTable }
+    NetorgScanner -> { DeviceTable }
     KnownDevicesLoader -> { yaml }
     DeviceTableLoader -> { DeviceTableBuilder }
     DeviceTableBuilder -> { DeviceTable }
     edge [dir=back arrowtail=diamond style=dashed]
     DeviceTable -> { DataFrame }
 
+    MerakiDeviceTableLoaderFactory [
+        label = <{<b>MerakiDeviceTableLoaderFactory</b> | + create()<br align="left"/>}>
+    ]
+    
     NetorgConfigurator[
         label = <{<b>NetorgConfigurator</b> | + generate()<br align="left"/>+ load()<br align="left"/>+ save()<br align="left"/>}>
     ]
@@ -29,7 +34,7 @@ digraph netorg_structure {
     ]
     
     DeviceTableLoader[
-        label = <{<b>DeviceTableLoader</b> | + load_registered()<br align="left"/>+ load_active_clients()<br align="left"/>+ load_fixed_ip_reservations()<br align="left"/>+ load_all()<br align="left"/>        }>
+        label = <{<b>DeviceTableLoader</b> | + load_known()<br align="left"/>+ load_active_clients()<br align="left"/>+ load_fixed_ip_reservations()<br align="left"/>+ load_all()<br align="left"/>        }>
     ]
     
     DataFrame [

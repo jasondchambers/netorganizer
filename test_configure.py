@@ -20,7 +20,9 @@ class NetorgConfiguratorTest(unittest.TestCase) :
             "vlan_id": 1,
             "vlan_subnet": "192.168.128.0/24"
         }
+        # TODO - take a backup copy of any existing config
         netorg_configurator.save()
         netorg_configurator2 = NetorgConfigurator()
         netorg_configurator2.load()
+        # TODO - Restore backup copy of any existing config
         self.assertDictEqual(mock_get_config.return_value,netorg_configurator2.config)
