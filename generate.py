@@ -1,28 +1,10 @@
 """This is the main module for Netorg generate."""
 
-from netorgmeraki import MerakiWrapper, MerakiActiveClientsLoader, MerakiFixedIpReservationsLoader
-from knowndevicesloader import KnownDevicesLoader
-from devicetable import DeviceTableLoader
-
 class NetorgGenerator:
     """All things associated with Netorg generate"""
 
-    def __init__(self, config):
-        meraki_wrapper = MerakiWrapper(config['api_key'])
-        known_devices_loader = KnownDevicesLoader(config['devices_yml'])
-        meraki_active_clients_loader = MerakiActiveClientsLoader(
-            meraki_wrapper.dashboard,
-            config['serial_id'],
-            config['vlan_id'])
-        meraki_fixed_ip_reservations_loader = MerakiFixedIpReservationsLoader(
-            meraki_wrapper.dashboard,
-            config['network_id'],
-            config['vlan_id'])
-        device_table_loader = DeviceTableLoader(
-            known_devices_loader,
-            meraki_active_clients_loader,
-            meraki_fixed_ip_reservations_loader)
-        self.device_table = device_table_loader.load_all()
+    def __init__(self, config, device_table):
+        self.device_table = device_table
         self.devices_yml_path = config['devices_yml']
 
     def generate(self) :

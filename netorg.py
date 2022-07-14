@@ -1,9 +1,19 @@
 """This is the main module for Netorg."""
 import argparse
 import sys
+from merakidevicetableloaderfactory import MerakiDeviceTableLoaderFactory
 from configure import NetorgConfigurator
 from scan import NetorgScanner
 from generate import NetorgGenerator
+
+def load_device_table(config):
+    device_table_loader = MerakiDeviceTableLoaderFactory.create(config)
+    return device_table_loader.load_all()
+
+def load_config():
+    configurator = NetorgConfigurator()
+    configurator.load()
+    config = configurator.get_config()
 
 def main():
     """Figure out what the user wants to happen and make it so."""
@@ -21,17 +31,16 @@ def main():
         configurator.save()
     elif args.generate:
         print("Generate")
-        configurator = NetorgConfigurator()
-        configurator.load()
-        config = configurator.get_config()
-        generator = NetorgGenerator(config)
+        device_table = load_device_table(config)
+        generator = NetorgGenerator(config, device_table)
         generator.generate()
     elif args.scan:
         print("scan")
         configurator = NetorgConfigurator()
         configurator.load()
         config = configurator.get_config()
-        scanner = NetorgScanner(config)
+        device_table = load_device_table(config)
+        scanner = NetorgScanner(config, device_table)
         scanner.run()
         scanner.report()
     elif args.organize:
