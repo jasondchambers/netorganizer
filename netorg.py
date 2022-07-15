@@ -3,6 +3,7 @@ import argparse
 import sys
 from merakidevicetableloaderfactory import MerakiDeviceTableLoaderFactory
 from configure import NetorgConfigurator
+from netorgmeraki import MerakiNetworkMapper, MerakiWrapper
 from scan import NetorgScanner
 from generate import NetorgGenerator
 
@@ -44,6 +45,12 @@ def main():
         scanner.report()
     elif args.organize:
         print("Organize")
+        config = load_config()
+        device_table = load_device_table(config)
+        generator = NetorgGenerator(config, device_table)
+        generator.generate()
+        meraki_network_mapper = MerakiNetworkMapper(config, device_table)
+        meraki_network_mapper.make_fixed_ip_reservations()
     else:
         parser.print_help(sys.stderr)
 

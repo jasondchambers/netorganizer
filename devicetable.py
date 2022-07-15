@@ -19,17 +19,6 @@ class DeviceTable :
             print('Duplicate IPs in device table')
             return False
 
-    def has_unique_names(self) -> bool:
-        if len(self.df.name.unique() == self.df.shape[0]) :
-            return True 
-        else :
-            print('Duplicate names in device table')
-            return False
-
-    def is_valid(self) :
-        v = self.has_unique_macs() and self.has_unique_ips() and self.has_unique_names()
-        return v
-        
 class DeviceTableBuilder :
     def __init__(self) -> None:
         self.devices_dict = dict()
@@ -91,7 +80,6 @@ class DeviceTableLoader :
                 # device has been loaded already
                 record['active'] = True
                 record['ip'] = active_client['ip'] 
-                print(f'Updating record ip and active for {record["name"]} {active_client["mac"]}')
                 self.device_table_builder.set_details(active_client['mac'], record)
             else:
                 # Seeing device for the first time
@@ -99,7 +87,6 @@ class DeviceTableLoader :
                 record['active'] = True 
                 record['ip'] = active_client['ip']
                 record['name'] = active_client['description']
-                print(f'Creating record for unknown {record["name"]} {active_client["mac"]}')
                 self.device_table_builder.set_details(active_client['mac'], record)
 
     def load_fixed_ip_reservations(self) :
@@ -112,7 +99,6 @@ class DeviceTableLoader :
                     if (record['active'] == False) :
                         # Is in-active - has no IP so use the reserved IP
                         record['ip'] = fixed_ip_reservation_details['ip']
-                    print(f'Updating record reserved for {record["name"]} {mac}')
                     self.device_table_builder.set_details(mac, record)
                 else :
                     # Seeing device for the first time
@@ -120,7 +106,6 @@ class DeviceTableLoader :
                     record['reserved'] = True
                     record['ip'] = fixed_ip_reservation_details['ip']
                     record['name'] = fixed_ip_reservation_details['name']
-                    print(f'Creating record ip reserved for {record["name"]} {mac}')
                     self.device_table_builder.set_details(mac, record)
 
     def load_all(self) -> DataFrame :

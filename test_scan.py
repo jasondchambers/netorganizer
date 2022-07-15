@@ -4,16 +4,16 @@ from scan import NetorgScanner
 
 # Test table
 #
-#   known | reserved (IP) | active | Description                                | Action
-# ========+===============+========+============================================+=======
-#       0 |             0 |      0 |                                            | 
-# __a   0 |             0 |      1 | active                                     | register the device
-# _r_   0 |             1 |      0 | reserved                                   | remove reservation
-# _ra   0 |             1 |      1 | reserved & active                          | register the device
-# k__   1 |             0 |      0 | known                                      | create reservation
-# k_a   1 |             0 |      1 | known & active                             | convert to static reservation
-# kr_   1 |             1 |      0 | known & reserved                           | 
-# kra   1 |             1 |      1 | known & reserved & active (& unclassified) | invite classification
+#   known | reserved (IP) | IP   | active | Description                                | Action
+# ========+===============+======+========+===========================================+=======
+#       0 |             0 |      |      0 |                                            | 
+# __a   0 |             0 | .201 |      1 | active                                     | register the device
+# _r_   0 |             1 | .202 |      0 | reserved                                   | remove reservation
+# _ra   0 |             1 | .203 |      1 | reserved & active                          | register the device
+# k__   1 |             0 |      |      0 | known                                      | create reservation
+# k_a   1 |             0 | .205 |      1 | known & active                             | convert to static reservation
+# kr_   1 |             1 | .206 |      0 | known & reserved                           | 
+# kra   1 |             1 | .207 |      1 | known & reserved & active (& unclassified) | invite classification
 
 class MockKnownDevicesLoader:
 
@@ -33,9 +33,9 @@ class MockActiveClientsLoader:
 
     list = [
         {'mac': '__a', 'description': '__a',  'ip': '192.168.128.201'}, 
-        {'mac': '_ra', 'description': '_ra',  'ip': '192.168.128.202'}, 
-        {'mac': 'k_a', 'description': 'k_a',  'ip': '192.168.128.203'}, 
-        {'mac': 'kra', 'description': 'kra',  'ip': '192.168.128.204'}]
+        {'mac': '_ra', 'description': '_ra',  'ip': '192.168.128.203'}, 
+        {'mac': 'k_a', 'description': 'k_a',  'ip': '192.168.128.205'}, 
+        {'mac': 'kra', 'description': 'kra',  'ip': '192.168.128.207'}]
 
     def get_list_of_macs() :
         return [d['mac'] for d in MockActiveClientsLoader.list]
@@ -46,10 +46,10 @@ class MockActiveClientsLoader:
 class MockFixedIpReservationsLoader:
 
     dict = { 
-        '_r_': {'ip': '192.168.128.191', 'name': '_r_'}, 
-        '_ra': {'ip': '192.168.128.202', 'name': '_ra'}, 
-        'kr_': {'ip': '192.168.128.191', 'name': 'kr_'}, 
-        'kra': {'ip': '192.168.128.204', 'name': 'kra'}}
+        '_r_': {'ip': '192.168.128.202', 'name': '_r_'}, 
+        '_ra': {'ip': '192.168.128.203', 'name': '_ra'}, 
+        'kr_': {'ip': '192.168.128.206', 'name': 'kr_'}, 
+        'kra': {'ip': '192.168.128.207', 'name': 'kra'}}
 
     def get_list_of_macs() :
         return MockFixedIpReservationsLoader.dict.keys()

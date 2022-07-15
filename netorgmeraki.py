@@ -1,6 +1,6 @@
-
-
 import meraki
+import re
+from deepdiff import DeepDiff
 from ipv4privatenetworkspace import Ipv4PrivateNetworkSpace
 
 class MerakiWrapperException(Exception) :
@@ -169,19 +169,24 @@ class MerakiActiveClientsLoader:
 
 
 class MerakiFixedIpReservationsGenerator : 
-        def generate(self,device_table) -> dict:
-                dict = {}
-                df = device_table.df
-                macs = df.mac.unique().tolist()
-                for mac in macs :
-                        device_df = df.query('mac == @mac')
-                        if device_df.shape[0] == 1:
-                                ip = device_df.iloc[0]['ip']
-                                name = device_df.iloc[0]['name']
-                                dict[mac] = { 
-                                        'ip': ip, 
-                                        'name': name}
-                return dict
+    def generate(self,device_table) -> dict:
+        dict = {}
+        df = device_table.df
+        skip_these_macs = df.query("not known and reserved and not active").mac.unique().tolist()
+        macs = df.mac.unique().tolist()
+        for mac in macs :
+            if mac not in skip_these_macs: 
+                device_df = df.query('mac == @mac') 
+                if device_df.shape[0] == 1: 
+                    ip = device_df.iloc[0]['ip'] 
+                    name = device_df.iloc[0]['name'] 
+                    dict[mac] = { 
+                        'ip': ip, 
+                        'name': name
+                    }
+            else:
+                print(f'MerakiFixedIpReservationsGenerator: skipping {mac}')
+        return dict
 
 class MerakiFixedIpReservationsLoader:
 
@@ -197,14 +202,17 @@ class MerakiFixedIpReservationsLoader:
 
 class MerakiNetworkMapper : # TODO
 
-    def __init__(self, device_table, meraki_wrapper) -> None:
-        self.meraki_wrapper = meraki_wrapper
+    def __init__(self, config, device_table) -> None:
+        self.config = config
         self.device_table = device_table
-        self.network_space = Ipv4PrivateNetworkSpace(meraki_wrapper.vlan_subnet)
+        self.network_space = Ipv4PrivateNetworkSpace(config['vlan_subnet'])
+        for ip in self.find_ips() :
+            self.network_space.allocate_specific_address(ip)
+        for mac in self.find_macs_needing_ip() :
+            self.assign_ip(mac)
     
     def find_ips(self) -> list:
         df = self.device_table.df
-        #l = [ip for ip in df.ip.unique.tolist() if ip]
         l = df.query("ip != ''")['ip'].tolist() 
         return l
 
@@ -217,21 +225,50 @@ class MerakiNetworkMapper : # TODO
         df = self.device_table.df
         df.loc[df["mac"] == mac, "ip"] = self.network_space.allocate_address()
 
-    def map_devices_to_network_space(self) :
-        if self.device_table.has_unique_ips() : 
-            # Persist exising reservations
-            ips = self.find_ips() 
-            for ip in ips : 
-                self.network_space.allocate_specific_address(ip)
-            macs_needing_ip = self.find_macs_needing_ip()
-            # Newly discovered devices will need an IP address
-            for mac in macs_needing_ip : 
-                self.assign_ip(mac)
-            # Now generate new set of fixedIP reservations - MerakiFixedIpReservationsGenerator
-            fixed_ip_reservations_generator = MerakiFixedIpReservationsGenerator()
-            fixed_ip_reservations = fixed_ip_reservations_generator.generate(self.device_table)
-            print(fixed_ip_reservations)
-            # Now tell Meraki
-            # TODO
+    def generate_fixed_ip_reservations(self) :
+        fixed_ip_reservations_generator = MerakiFixedIpReservationsGenerator()
+        return fixed_ip_reservations_generator.generate(self.device_table)
 
+    def show_diffs(self, old_fixed_ip_reservations, new_fixed_ip_reservations):
+        diff = DeepDiff(old_fixed_ip_reservations, new_fixed_ip_reservations) 
+        if diff:
+            print("Fixed IP reservation differences are as follows:") 
+            if 'dictionary_item_added' in diff: 
+                print("  Adding reservations:")
+                added_list = diff['dictionary_item_added'] 
+                for added in added_list: 
+                    added = re.search("'.*'", added) 
+                    if added: 
+                        added = added.group() 
+                        added = added.strip("'") 
+                        print(f'    {new_fixed_ip_reservations[added]["ip"]} for device {added} named {new_fixed_ip_reservations[added]["name"]}')
+            else:
+                print("  There are no new fixed IP reservations") 
+            if 'dictionary_item_removed' in diff: 
+                print("  Removing reservations:")
+                removed_list = diff['dictionary_item_removed'] 
+                for removed in removed_list: 
+                    removed = re.search("'.*'", removed) 
+                    if removed: 
+                        removed = removed.group() 
+                        removed = removed.strip("'") 
+                        print(f'    {old_fixed_ip_reservations[removed]["ip"]} for device {removed} named {old_fixed_ip_reservations[removed]["name"]}')
+        else:
+            print("There are no changes to fixed IP reservations")
 
+    def make_fixed_ip_reservations(self) :
+        new_fixed_ip_reservations = self.generate_fixed_ip_reservations()
+        meraki_wrapper = MerakiWrapper(self.config['api_key'])
+
+        dashboard = meraki_wrapper.dashboard
+        network_id = self.config['network_id']
+        vlan_id = str(self.config['vlan_id'])
+
+        before_vlan = dashboard.appliance.getNetworkApplianceVlan(network_id, str(vlan_id))
+        old_fixed_ip_reservations = before_vlan['fixedIpAssignments']
+
+        self.show_diffs(old_fixed_ip_reservations, new_fixed_ip_reservations) 
+
+        response = dashboard.appliance.updateNetworkApplianceVlan(
+            network_id, vlan_id, 
+            fixedIpAssignments=new_fixed_ip_reservations)

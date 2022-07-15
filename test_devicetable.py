@@ -119,7 +119,6 @@ class TestDeviceTableLoader(unittest.TestCase) :
         mock_fixed_ip_reservations_loader = MockFixedIpReservationsLoader()
         device_table_loader = DeviceTableLoader(mock_known_devices_file_loader, mock_active_clients_loader, mock_fixed_ip_reservations_loader) 
         df = device_table_loader.load_all().df
-        print(df)
         self.assertEqual(TEST_TABLE_SIZE,df.shape[0])
 
         # known
@@ -167,12 +166,3 @@ class TestDeviceTableLoader(unittest.TestCase) :
         for mac in expected :
             self.assertIn(mac,actual)
         self.assertEqual(len(expected),len(actual))
-
-    def test_load_duplicate_mac_known(self) :
-        mock_duplicate_mac_known_devices_file_loader = MockDuplicateMacKnownDevicesLoader()
-        device_table_loader = DeviceTableLoader(mock_duplicate_mac_known_devices_file_loader, None, None) 
-        device_table_loader.load_known()
-        device_table = device_table_loader.device_table_builder.build()
-        # Although the loaded data has duplicate MACs, the way it is loaded - the last
-        # device wins and there will only be one MAC - hence it will be valid
-        self.assertTrue(device_table.is_valid())
