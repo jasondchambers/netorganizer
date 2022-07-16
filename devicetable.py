@@ -47,7 +47,9 @@ class DeviceTableBuilder :
         for mac in self.devices_dict:
             details = self.devices_dict[mac]
             s = {'mac': mac}
-            data.append(s | details)
+            #data.append(s | details)
+            merged = {**s,**details}
+            data.append(merged)
         return DeviceTable(data)
         
 class DeviceTableLoaderException(Exception) :

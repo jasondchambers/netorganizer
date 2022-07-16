@@ -10,13 +10,21 @@ class NetorgConfigurator:
 
     def __init__(self):
         self.config = {}
+        self.get_api_key_func = NetorgConfigurator.default_get_api_key_func
+        self.choose_from_options_func = NetorgConfigurator.default_choose_from_options_func
+
+    def set_get_api_key_func(self,get_api_key_func):
+        self.get_api_key_func = get_api_key_func
+
+    def set_choose_from_options_func (self,choose_from_options_func):
+        self.choose_from_options_func = choose_from_options_func
 
     def get_config(self) -> dict:
         """Return the current config (may have either been generated or loaded)."""
         return self.config
 
     @staticmethod
-    def get_api_key() -> str:
+    def default_get_api_key_func() -> str:
         """Obtain the Meraki API key from the user"""
         print ("You will need to obtain an API key. See the following for details:")
         print ("https://developer.cisco.com/meraki/api-v1/#!authorization/obtaining-your-meraki-api-key")
@@ -24,7 +32,7 @@ class NetorgConfigurator:
         return api_key
 
     @staticmethod
-    def choose_from_options(thing, choices) -> str:
+    def default_choose_from_options_func(thing, choices) -> str:
         """Present options to user and return their selection."""
         print(f'Multiple {thing}s found:')
         [ print(f'{k} - {v}') for (k,v) in choices.items()]
@@ -34,11 +42,11 @@ class NetorgConfigurator:
                 break
         return selection
 
-    def generate(self, get_api_key_func=get_api_key, choose_from_options_func=choose_from_options) -> None:
+    def generate(self) -> None:
         """Generate a configuration"""
-        api_key = get_api_key_func()
+        api_key = self.default_get_api_key_func()
         meraki_wrapper = MerakiWrapper(api_key)
-        meraki_wrapper.initialize(choose_from_options_func)
+        meraki_wrapper.initialize(self.default_choose_from_options_func)
         self.config = {}
         self.config['api_key'] = api_key
         self.config['devices_yml'] = NetorgConfigurator.get_devices_yml_path()
