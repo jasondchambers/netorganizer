@@ -55,7 +55,7 @@ Record the API key somewhere as you will be prompted for it during subsequent ph
 
 ### 2. Installation
 
-This has been developed and tested for Python 3.10.5. Earlier versions may not work. Python 2 will certainly not work. All pip packages are installed in a separate virtual environment (venv). 
+This has been developed and tested for Python 3.10.5 on macOS 12.4/Monterey and on Python 3.8.10 on Ubuntu 20.04. It's possible that other combinations may work - it's just that they haven't been tested. All pip packages are installed in a separate virtual environment (venv). You will need to ensure the appropriate python3-venv package is installed. 
 
 Ensure the environment variable $NETORG_HOME is set to the directory where netorganizer is located.
 
