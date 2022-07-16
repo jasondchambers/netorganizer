@@ -30,6 +30,12 @@ The --organize feature performs a scan and executes any actions based on the fin
 $ netorg --organize
 ```
 
+The --devicetable features enables the device table to be exported.
+```bash
+$ netorg --devicetable
+```
+
+
 ## Terminology
 
 A __device__ is a host on the network. A Smart TV or a laptop are examples of devices.
@@ -389,6 +395,22 @@ Generating devices.yml file at /Users/jasonchambers/devices.yml
 Loading known devices from /Users/jasonchambers/devices.yml
 NetorgGenerator: There are no changes to known devices (devices.yml)
 There are no changes to fixed IP reservations
+```
+
+### 5. Export device table
+
+Internally, the device table is created based on data from active clients, known devices and fixed IP reservations. It is the central entity of Net Organizer. It can be exported paving the way for other use cases of the data by other applications and tools.
+
+```text
+$ netorg.py --devicetable
+Export the device table
+Loading config file /Users/jasonchambers/.netorg.cfg
+Loading known devices from /Users/jasonchambers/devices.yml
+,mac,known,reserved,active,ip,group,name
+0,f8:63:3f:xx:xx:xx,True,True,True,192.x.x.x,servers,Servers Linux
+1,00:1b:a9:xx:xx:xx,True,True,False,192.x.x.x,printers,Printers Office
+26,d6:4e:cd:xx:xx:xx,True,True,True,192.x.x.x,roses_devices,Roses Devices iPhone 1
+27,72:e7:34:xx:xx:xx,True,True,False,192.x.x.x,roses_devices,Roses Devices Apple Watch
 ```
 
 # Supports

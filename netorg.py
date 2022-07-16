@@ -24,6 +24,7 @@ def main():
     group.add_argument("-g", "--generate", help="Generate/update a devices.yml", action="store_true")
     group.add_argument("-s", "--scan", help="Scan to see what's active, known, reserved", action="store_true")
     group.add_argument("-o", "--organize", help="Organize the network", action="store_true")
+    group.add_argument("-d", "--devicetable", help="Export the device table", action="store_true")
     args = parser.parse_args()
     if args.configure:
         print("Configure")
@@ -52,6 +53,13 @@ def main():
         generator.generate()
         meraki_network_mapper = MerakiNetworkMapper(config, device_table)
         meraki_network_mapper.make_fixed_ip_reservations()
+    elif args.devicetable:
+        #TODO allow a DataFrame query string to be passed
+        #TODO allow the columns to be specified
+        print("Export the device table")
+        config = load_config()
+        device_table = load_device_table(config)
+        print(device_table.df.to_csv())
     else:
         parser.print_help(sys.stderr)
 
