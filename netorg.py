@@ -43,6 +43,7 @@ def main():
         scanner = NetorgScanner(device_table)
         scanner.run()
         scanner.report()
+        print(device_table.df)
     elif args.organize:
         print("Organize")
         config = load_config()
