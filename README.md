@@ -239,6 +239,158 @@ You should consider classifying them before the next organize
      LT6221
      None
 ```
+
+### 5. Organize
+
+Let's now have Network Organizer take some action based on what it finds. 
+
+#### 5.1. A new device joins the network
+
+The most typical scenario will be a new device joining the network. As a new device, it won't have a fixed IP reservation and it will not be known device in the devices.yml file. In this scenario, a new iPad has just joined the network:
+
+```text
+$ netorg -o
+Organize
+Loading config file /Users/jasonchambers/.netorg.cfg
+Loading known devices from /Users/jasonchambers/devices.yml
+Loading known devices from /Users/jasonchambers/devices.yml
+Generating devices.yml file at /Users/jasonchambers/devices.yml
+Loading known devices from /Users/jasonchambers/devices.yml
+NetorgGenerator: Known devices (devices.yml) differences are as follows:
+  Adding devices:
+    unclassified: Jasons Devices iPad c2:ae:0b:5c:32:36
+Fixed IP reservation differences are as follows:
+  Adding reservations:
+    192.168.128.169 for device c2:ae:0b:5c:32:36 named Jasons Devices iPad
+```
+
+All new devices will be "unclassified". If you do nothing, on the next scan there will be a reminder to classify it:
+
+```text
+➜  ~ netorg -s
+scan
+Loading config file /Users/jasonchambers/.netorg.cfg
+Loading known devices from /Users/jasonchambers/devices.yml
+.......
+Found 1 device(s) that are: active and group == 'unclassified'
+You should consider classifying them before the next organize
+     Jasons Devices iPad
+```
+
+So, let's go ahead and classify it by modifying the devices.yml file in a text editor. We do this by simply moving the line containing the device under the unclassified: section into a more appropriate group:
+
+Before:
+```yaml
+devices:
+  jasons_devices:
+    - Jasons Devices iPhone-11-Pro-Max,5e:1e:16:aa:a3:ee
+    - Jasons Devices work laptop-JASCHAMB-M-XRDP,f8:4d:89:7d:71:90
+    - Jasons Devices iMac,3c:22:fb:a3:a7:90
+    - Jasons Devices Apple Watch,6a:0a:75:9c:5d:13
+  unclassified:
+    - Jasons Devices iPad,c2:ae:0b:5c:32:36
+```
+
+After:
+```yaml
+devices:
+  jasons_devices:
+    - Jasons Devices iPhone-11-Pro-Max,5e:1e:16:aa:a3:ee
+    - Jasons Devices work laptop-JASCHAMB-M-XRDP,f8:4d:89:7d:71:90
+    - Jasons Devices iMac,3c:22:fb:a3:a7:90
+    - Jasons Devices Apple Watch,6a:0a:75:9c:5d:13
+    - Jasons Devices iPad,c2:ae:0b:5c:32:36
+```
+
+#### 5.2. Missing fixed IP reservation
+
+Let's assume we have a device that is active on the network. It is a known device, but for whatever reason it is missing a fixed IP reservation. Network Organizer can detect this scenario during a scan:
+
+```text
+$ netorg -s
+scan
+Loading config file /Users/jasonchambers/.netorg.cfg
+Loading known devices from /Users/jasonchambers/devices.yml
+Did not find any devices that are: not known and not reserved and active
+Did not find any devices that are: not known and reserved and not active
+Did not find any devices that are: not known and reserved and active
+Did not find any devices that are: known and not reserved and not active
+Found 1 device(s) that are: known and not reserved and active
+The current IP will be converted to a static IP during the next organize
+     Jasons Devices iPad
+```
+
+Now let's organize:
+
+```text
+$ netorg -o
+Organize
+Loading config file /Users/jasonchambers/.netorg.cfg
+Loading known devices from /Users/jasonchambers/devices.yml
+Loading known devices from /Users/jasonchambers/devices.yml
+Generating devices.yml file at /Users/jasonchambers/devices.yml
+Loading known devices from /Users/jasonchambers/devices.yml
+NetorgGenerator: There are no changes to known devices (devices.yml)
+Fixed IP reservation differences are as follows:
+  Adding reservations:
+    192.168.128.169 for device c2:ae:0b:5c:32:36 named Jasons Devices iPad
+```
+
+#### 5.3. Retired devices
+
+For this scenario, let's assume there is a fixed IP reservation taking up space. The device is not active and it is not a known device captured in the devices.yml. Perhaps it the device is an old piece of equipment you have retired. In this case, we want the reservation to be removed. To test this, a bogus reservation for a device named "Wasteful fixed IP assignment" was created prior to running:
+
+```text
+$ netorg -o
+Organize
+Loading config file /Users/jasonchambers/.netorg.cfg
+Loading known devices from /Users/jasonchambers/devices.yml
+Loading known devices from /Users/jasonchambers/devices.yml
+Generating devices.yml file at /Users/jasonchambers/devices.yml
+KnownDevicesGenerator: Skipping Wasteful fixed IP assignment,ce:13:2f:72:24:ff
+Loading known devices from /Users/jasonchambers/devices.yml
+NetorgGenerator: There are no changes to known devices (devices.yml)
+MerakiFixedIpReservationsGenerator: skipping ce:13:2f:72:24:ff
+Fixed IP reservation differences are as follows:
+  There are no new fixed IP reservations
+  Removing reservations:
+    192.168.128.222 for device ce:13:2f:72:24:ff named Wasteful fixed IP assignment
+```
+
+#### 5.4. New devices that are yet to join the network
+
+For this scenario let's consider a new device. The device in the example is a new Ring camera. The device is not on the network yet so it is not active. It has never been active on the network and so does not have a fixed IP reservation. This is an unusual scenario because you would typically wait for it to join the network, and then run --generate to capture the MAC address and let Network Organizer add it to the devices.yml file, but just for this scenario let's assume the device was manually entered into the devices.yml file:
+
+```text
+$ netorg -o
+Organize
+Loading config file /Users/jasonchambers/.netorg.cfg
+Loading known devices from /Users/jasonchambers/devices.yml
+Loading known devices from /Users/jasonchambers/devices.yml
+Generating devices.yml file at /Users/jasonchambers/devices.yml
+Loading known devices from /Users/jasonchambers/devices.yml
+NetorgGenerator: There are no changes to known devices (devices.yml)
+Fixed IP reservation differences are as follows:
+  Adding reservations:
+    192.168.128.24 for device ce:13:2f:72:24:ff named A new Ring cam
+```
+
+#### 5.5. No new changes on the network
+
+As your network begins to settle down, typically there is no organizing to be done and you will see output like this:
+
+```text
+$ netorg -o
+Organize
+Loading config file /Users/jasonchambers/.netorg.cfg
+Loading known devices from /Users/jasonchambers/devices.yml
+Loading known devices from /Users/jasonchambers/devices.yml
+Generating devices.yml file at /Users/jasonchambers/devices.yml
+Loading known devices from /Users/jasonchambers/devices.yml
+NetorgGenerator: There are no changes to known devices (devices.yml)
+There are no changes to fixed IP reservations
+```
+
 # Supports
 
 1. Cisco Meraki powered networks only (for now)
