@@ -14,9 +14,11 @@ class NetorgConfigurator:
         self.choose_from_options_func = NetorgConfigurator.default_choose_from_options_func
 
     def set_get_api_key_func(self,get_api_key_func):
+        """Over-ride default_get_api_func() with a custom function"""
         self.get_api_key_func = get_api_key_func
 
     def set_choose_from_options_func (self,choose_from_options_func):
+        """Over-ride default_choose_from_options_func() with a custom function"""
         self.choose_from_options_func = choose_from_options_func
 
     def get_config(self) -> dict:
@@ -25,6 +27,7 @@ class NetorgConfigurator:
 
     @staticmethod
     def default_get_api_key_func() -> str:
+        # pylint: disable=line-too-long
         """Obtain the Meraki API key from the user"""
         print ("You will need to obtain an API key. See the following for details:")
         print ("https://developer.cisco.com/meraki/api-v1/#!authorization/obtaining-your-meraki-api-key")
@@ -33,11 +36,12 @@ class NetorgConfigurator:
 
     @staticmethod
     def default_choose_from_options_func(thing, choices) -> str:
+        # pylint: disable=expression-not-assigned
         """Present options to user and return their selection."""
         print(f'Multiple {thing}s found:')
         [ print(f'{k} - {v}') for (k,v) in choices.items()]
-        while True: 
-            selection = input(f'Which {thing}? : ') 
+        while True:
+            selection = input(f'Which {thing}? : ')
             if selection in choices:
                 break
         return selection
@@ -57,6 +61,7 @@ class NetorgConfigurator:
         self.config['vlan_subnet'] = meraki_wrapper.get_vlan_subnet()
 
     def get_config_filename(self) -> str:
+        """Return the fully qualified config filename e.g. /a/b/.netorg.cfg"""
         directory = os.path.expanduser('~')
         filename = '.netorg.cfg'
         return os.path.join(directory,filename)
@@ -71,7 +76,7 @@ class NetorgConfigurator:
         """Save configuration."""
         if self.get_config():
             print(f'Saving config file {self.get_config_filename()}')
-            with open(self.get_config_filename(), 'w', encoding='utf8') as netorg_config_file: 
+            with open(self.get_config_filename(), 'w', encoding='utf8') as netorg_config_file:
                 netorg_config_file.write(json.dumps(self.get_config(), indent=2))
 
     @staticmethod
@@ -87,7 +92,8 @@ class NetorgConfigurator:
         """Obtain the directory for where to find/store known devices"""
         default = os.path.expanduser('~')
         while True:
-            device_yml_directory = input(f'Directory for where to find/store known devices [{default}]: ')
+            prompt = f'Directory for where to find/store known devices [{default}]: '
+            device_yml_directory = input(prompt)
             if not device_yml_directory:
                 return default
             if os.path.isdir(device_yml_directory):
