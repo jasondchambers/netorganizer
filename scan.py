@@ -4,6 +4,7 @@ class NetorgScanner:
     """All things associated with Netorg scanning"""
 
     def __init__(self, device_table):
+        # pylint: disable=line-too-long
         self.device_table = device_table
         self.analysis = {
             'not_known_not_reserved_ACTIVE': {
@@ -49,18 +50,23 @@ class NetorgScanner:
         }
 
     def run(self):
+        """Run the analysis updating the analysis dictionary with the findings."""
+        # pylint: disable=invalid-name
+        # pylint: disable=unused-variable
         df = self.device_table.df
         for k, v in self.analysis.items():
             query_result_df = df.query(v['query'])
             v['device_names'] = query_result_df['name'].values.tolist()
 
     def report(self) :
-        df = self.device_table.df
+        """Report on the findings discovered by run()."""
+        # pylint: disable=invalid-name
+        # pylint: disable=unused-variable
         for k, v in self.analysis.items():
             if len(v["device_names"]) == 0:
-                print(f'Did not find any devices that are: {v["query"]}') 
+                print(f'Did not find any devices that are: {v["query"]}')
             else:
-                print(f'Found {len(v["device_names"])} device(s) that are: {v["query"]}') 
+                print(f'Found {len(v["device_names"])} device(s) that are: {v["query"]}')
                 print(f'{v["action"]}')
                 for device_name in v['device_names']:
                     print(f'     {device_name}')
