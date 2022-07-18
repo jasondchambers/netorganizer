@@ -1,14 +1,14 @@
 """This is the main module for Netorg."""
 import argparse
 import sys
-from merakidevicetableloaderfactory import MerakiDeviceTableLoaderFactory
+import merakidevicetableloaderfactory 
 from configure import NetorgConfigurator
 from netorgmeraki import MerakiNetworkMapper, MerakiWrapper
 from scan import NetorgScanner
 from generate import NetorgGenerator
 
 def load_device_table(config):
-    device_table_loader = MerakiDeviceTableLoaderFactory.create(config)
+    device_table_loader = merakidevicetableloaderfactory.create(config)
     return device_table_loader.load_all()
 
 def load_config():
