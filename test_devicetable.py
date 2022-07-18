@@ -1,6 +1,5 @@
 import unittest
-#from unittest.mock import patch, MagicMock
-from devicetable import DeviceTableBuilder, DeviceTableLoader, DeviceTableLoaderException
+from devicetable import DeviceTableBuilder, DeviceTableLoader
 
 class TestDeviceTableBuilder(unittest.TestCase):
     def test_all(self) :
