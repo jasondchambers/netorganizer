@@ -1,8 +1,45 @@
 import unittest
 import pandas as pd
 from generate import KnownDevicesGenerator, NetorgGenerator
-from devicetable import DeviceTableBuilder
+from devicetable import DeviceTableBuilder, DeviceTableLoader
 from knowndevicesloader import KnownDevicesLoader
+from netorgmeraki import MerakiFixedIpReservationsGenerator
+
+class MockKnownDevicesLoader:
+    list = [
+        {'name': 'k__', 'mac': 'k__', 'group': 'servers'}, 
+        {'name': 'k_a', 'mac': 'k_a', 'group': 'printers'}, 
+        {'name': 'kr_', 'mac': 'kr_', 'group': 'security'},
+        {'name': 'kra', 'mac': 'kra', 'group': 'unclassified'}
+    ]
+    def get_list_of_macs() :
+        return [d['mac'] for d in MockKnownDevicesLoader.list]
+    def load(self,filename='./devices.yml') -> list:
+        return MockKnownDevicesLoader.list
+
+class MockActiveClientsLoader:
+    list = [
+        {'mac': '__a', 'description': '__a',  'ip': '192.168.128.201'}, 
+        {'mac': '_ra', 'description': '_ra',  'ip': '192.168.128.203'}, 
+        {'mac': 'k_a', 'description': 'k_a',  'ip': '192.168.128.205'}, 
+        {'mac': 'kra', 'description': 'kra',  'ip': '192.168.128.207'}
+    ]
+    def get_list_of_macs() :
+        return [d['mac'] for d in MockActiveClientsLoader.list]
+    def load(self) -> list:
+        return MockActiveClientsLoader.list
+
+class MockFixedIpReservationsLoader:
+    dict = { 
+        '_r_': {'ip': '192.168.128.202', 'name': '_r_'}, 
+        '_ra': {'ip': '192.168.128.203', 'name': '_ra'}, 
+        'kr_': {'ip': '192.168.128.206', 'name': 'kr_'}, 
+        'kra': {'ip': '192.168.128.207', 'name': 'kra'}
+    }
+    def get_list_of_macs() :
+        return MockFixedIpReservationsLoader.dict.keys()
+    def load(self) :
+        return MockFixedIpReservationsLoader.dict
 
 class TestKnownDevicesGenerator(unittest.TestCase):
     
@@ -64,3 +101,11 @@ class TestKnownDevicesGenerator(unittest.TestCase):
         known_devices_loader = KnownDevicesLoader()
         new_list = known_devices_loader.load_from_string(new_yaml)
         NetorgGenerator.show_diffs(old_list,new_list)
+
+    def test_meraki_fixed_ip_reservations_generator(self):
+        mock_known_devices_file_loader = MockKnownDevicesLoader()
+        mock_active_clients_loader = MockActiveClientsLoader()
+        mock_fixed_ip_reservations_loader = MockFixedIpReservationsLoader()
+        device_table_loader = DeviceTableLoader(mock_known_devices_file_loader, mock_active_clients_loader, mock_fixed_ip_reservations_loader) 
+        device_table = device_table_loader.load_all()
+        MerakiFixedIpReservationsGenerator.generate(device_table)
