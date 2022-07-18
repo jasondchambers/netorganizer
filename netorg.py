@@ -59,7 +59,7 @@ def main():
         generator = NetorgGenerator(config, device_table)
         generator.generate()
         meraki_network_mapper = MerakiNetworkMapper(config, device_table)
-        meraki_network_mapper.make_fixed_ip_reservations()
+        meraki_network_mapper.update_fixed_ip_reservations()
     elif args.devicetable:
         print("Export the device table")
         config = load_config()

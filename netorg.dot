@@ -43,7 +43,7 @@ digraph netorg_structure {
     ]
     
     MerakiNetworkMapper[
-        label = <{<b>MerakiNetworkMapper</b> | + make_fixed_ip_reservations()<br align="left"/>}>
+        label = <{<b>MerakiNetworkMapper</b> | + update_fixed_ip_reservations()<br align="left"/>}>
     ]
 
     DeviceTableLoader[
