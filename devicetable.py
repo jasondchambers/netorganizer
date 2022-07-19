@@ -101,6 +101,7 @@ class DeviceTableLoader :
 
     def load_fixed_ip_reservations(self) :
         """Load fixed IP reservations into the DeviceTable."""
+        # pylint: disable=line-too-long
         fixed_ip_reservations = self.fixed_ip_reservations_loader.load()
         if fixed_ip_reservations:
             for mac, fixed_ip_reservation_details in fixed_ip_reservations.items():
