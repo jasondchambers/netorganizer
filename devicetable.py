@@ -107,6 +107,10 @@ class DeviceTableLoader :
                 record = self.device_table_builder.get_details(mac)
                 if record:
                     record['reserved'] = True
+                    if record['ip']:
+                        if record['ip'] != fixed_ip_reservation_details['ip']:
+                            print(f'DeviceTableLoader: for {record["name"]} reservation {fixed_ip_reservation_details["ip"]} differs to current lease {record["ip"]}')
+                            print(f'DeviceTableLoader: using current lease {record["ip"]} to avoid potential for collisions')
                     if record['active'] is False :
                         # Is in-active - has no IP so use the reserved IP
                         record['ip'] = fixed_ip_reservation_details['ip']
