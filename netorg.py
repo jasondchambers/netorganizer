@@ -45,13 +45,12 @@ def main():
         generator = NetorgGenerator(config, device_table)
         generator.generate()
     elif args.scan:
-        print("scan")
+        print("Scan")
         config = load_config()
         device_table = load_device_table(config)
         scanner = NetorgScanner(device_table)
         scanner.run()
         scanner.report()
-        print(device_table.df)
     elif args.organize:
         print("Organize")
         config = load_config()
