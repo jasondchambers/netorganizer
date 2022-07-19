@@ -1,12 +1,12 @@
 # Net Organizer
 
-Not yet releasable. Still very much under development!
+ALthough we are getting close to approaching releasable state, this project is still very much under development!
 
-Network Organizer enables you to bring some order to the chaos that might be your network. It is essentially a simple IP Address Manager (IPAM). It enables you to take inventory of active hosts and to neatly classify each of them into groups. It will also manage fixed IP reservations for you. It can convert a dynamic IP or allocate a new fixed IP reservation for known hosts that do not have one. It can clean up lingering fixed IP reservations for unknown and in-active hosts. It can bring to your attention unknown hosts that are active on your network and invite you to classify them. 
+Net Organizer enables you to bring some order to the chaos that might be your network. It is essentially a simple IP Address Manager (IPAM). It enables you to take inventory of active hosts and to neatly classify each of them into groups. It will also manage fixed IP reservations for you. It can convert a dynamic IP or allocate a new fixed IP reservation for known hosts that do not have one. It can clean up lingering fixed IP reservations for unknown and in-active hosts. It can bring to your attention unknown hosts that are active on your network and invite you to classify them. 
 
 Along the way, it avoids network collisions and avoids disruptive re-mapping of the network space.
 
-Once hosts are classifed, you can export the device details for use by other tools - for example, Cisco Secure Network Analytics.
+Once hosts are classifed you can export the device details for use by other tools - for example, Cisco Secure Network Analytics.
 
 ## Usage
 
@@ -15,7 +15,7 @@ The --configure feature is required to get started and is also used if there are
 $ netorg --configure
 ```
 
-The --generate feature is used to generate the devices.yml file containing known devices. This step can be re-run to update the devices.yml file taking into account any new devices that may have joined the network since the file was generated.
+The --generate feature is used to generate the devices.yml file containing your known devices. This step can be re-run to update the devices.yml file adding any new devices that may have joined the network since the file was generated.
 ```bash
 $ netorg --generate
 ```
@@ -40,7 +40,7 @@ $ netorg --devicetable
 
 A __device__ is a host on the network. A Smart TV or a laptop are examples of devices.
 
-A __device__ is uniquely identified by it's MAC address. Note that MAC randomization has become popular with various devices to enhance privacy. MAC address randomization is an effective way to maintain privacy in public settings, where you don’t know who is looking at your connectivity and location history. But it does create challenges for managing your own network. It is recommended to turn off this feature when connecting to your own managed network, but by all means use the feature when joining public WiFi.
+A __device__ is uniquely identified by its MAC address. Note that MAC randomization has become popular with various devices to enhance privacy. MAC address randomization is an effective way to maintain privacy in public settings, where you don’t know who is looking at your connectivity and location history. But it does create challenges for managing your own network. It is recommended to turn off this feature when connecting to your own managed network, but by all means use the feature when joining public WiFi.
 
 There are 3 primary states for a device. The states are __known__, __active__ and __reserved__ and are described below. Note that these states are NOT mutually exclusive. For example, a device could be __known__ and __active__ but not __reserved__. Therefore, the total number of possible states a device could be in is 7 (2 ^ 3 - 1). 
 
@@ -57,13 +57,13 @@ A device can be __reserved__ where it has a fixed IP reservation. This means it 
 You will need to obtain a Meraki API key. See the following for details:
 https://developer.cisco.com/meraki/api-v1/#!authorization/obtaining-your-meraki-api-key
 
-Record the API key somewhere as you will be prompted for it during subsequent phases of the installation and configuration of netorganizer.
+Record the API key somewhere as you will be prompted for it during subsequent phases of the installation and configuration of Net Organizer.
 
 ### 2. Installation
 
 This has been developed and tested for Python 3.10.5 on macOS 12.4/Monterey and on Python 3.8.10 on Ubuntu 20.04. It's possible that other combinations may work - it's just that they haven't been tested. All pip packages are installed in a separate virtual environment (venv). You will need to ensure the appropriate python3-venv package is installed. 
 
-Ensure the environment variable $NETORG_HOME is set to the directory where netorganizer is located.
+Ensure the environment variable $NETORG_HOME is set to the directory where Net Organizer is located.
 
 Ensure the PATH includes $NETORG_HOME.
 
@@ -101,7 +101,7 @@ Filename for where to find/store known devices [devices.yml]:
 Saving config file /Users/bob/.netorg.cfg
 ```
 
-You shouldn't need to reconfigure netorganizer again unless you rotate your Meraki API Key and/or modify your network in anyway (e.g. different network settings, subnets, vlans, devices).
+You shouldn't need to reconfigure Net Organizer again unless you rotate your Meraki API Key and/or modify your network in anyway (e.g. different network settings, subnets, vlans, devices).
 
 ### 4. Generate devices.yml
 
