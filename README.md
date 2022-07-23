@@ -1,6 +1,6 @@
 # Net Organizer
 
-ALthough we are getting close to approaching releasable state, this project is still very much under development!
+Although we are getting close to approaching releasable state, this project is still very much under development!
 
 Net Organizer enables you to bring some order to the chaos that might be your network. It is essentially a simple IP Address Manager (IPAM). It enables you to take inventory of active hosts and to neatly classify each of them into groups. It will also manage fixed IP reservations for you. It can convert a dynamic IP or allocate a new fixed IP reservation for known hosts that do not have one. It can clean up lingering fixed IP reservations for unknown and in-active hosts. It can bring to your attention unknown hosts that are active on your network and invite you to classify them. 
 
@@ -35,6 +35,10 @@ The --devicetable features enables the device table to be exported.
 $ netorg --devicetable
 ```
 
+The --pushchangestosna feature pushes host group changes to Secure Network Analytics.
+```bash
+$ netorg --pushchangestosna
+```
 
 ## Terminology
 
@@ -78,13 +82,13 @@ $ ./install.sh
 To get started, you will need to generate a netorg configuration file. It's just a JSON text file that resides in the user's home directory. Rather than create one by hand, you can generate one using the --configure flag as follows:
 
 ```text
-$ netorg --configure
+➜  ~ netorg -c
 Configure
 You will need to obtain an API key. See the following for details:
 https://developer.cisco.com/meraki/api-v1/#!authorization/obtaining-your-meraki-api-key
-Meraki API key: 
+Meraki API key:
 Multiple networks found:
-1 - Nottingham Office
+1 - Stratford
 2 - Mobile devices
 Which network? : 1
 Multiple devices found:
@@ -96,9 +100,14 @@ Multiple VLANs found:
 2 - CIMC - 192.168.4.0/24
 3 - ENCS - 192.168.5.0/24
 Which VLAN? : 1
-Directory for where to find/store known devices [/Users/bob]: 
-Filename for where to find/store known devices [devices.yml]: 
-Saving config file /Users/bob/.netorg.cfg
+Directory for where to find/store known devices [/Users/jasonchambers]:
+Filename for where to find/store known devices [devices.yml]:
+Do you want to configure Secure Network Analytics? (y/n) [n]:y
+Manager host: 192.xxx.xxx.xxx
+Manager username: xxxxx
+Manager password:
+Secure Network Analytics configuration is valid
+Saving config file /Users/jasonchambers/.netorg.cfg
 ```
 
 You shouldn't need to reconfigure Net Organizer again unless you rotate your Meraki API Key and/or modify your network in anyway (e.g. different network settings, subnets, vlans, devices).
@@ -397,7 +406,7 @@ NetorgGenerator: There are no changes to known devices (devices.yml)
 There are no changes to fixed IP reservations
 ```
 
-### 5. Export device table
+### 6. Export device table
 
 Internally, the device table is created based on data from active clients, known devices and fixed IP reservations. It is the central entity of Net Organizer. It can be exported paving the way for other use cases of the data by other applications and tools.
 
@@ -411,6 +420,23 @@ Loading known devices from /Users/jasonchambers/devices.yml
 1,00:1b:a9:xx:xx:xx,True,True,False,192.x.x.x,printers,Printers Office
 26,d6:4e:cd:xx:xx:xx,True,True,True,192.x.x.x,roses_devices,Roses Devices iPhone 1
 27,72:e7:34:xx:xx:xx,True,True,False,192.x.x.x,roses_devices,Roses Devices Apple Watch
+```
+
+### 7. Push changes to Secure Network Analytics
+
+Device groupings can be pushed to Secure Network Analytics in the form of host groups. New host groups are created, modified host groups are updated and host groups that are not longer required are deleted.
+
+In this scenario, the network has a new device group called arlo_cameras containing just one device. This is pushed to Secure Network Analytics.
+
+```text
+➜  ~ netorg -p
+Loading config file /Users/jasonchambers/.netorg.cfg
+Pushing changes to Secure Network Analytics
+Loading known devices from /Users/jasonchambers/devices.yml
+Net Organizer Groups already exists
+Adding arlo_cameras ['192.168.128.218']
+No host groups to update
+No host groups to delete
 ```
 
 # Supports
