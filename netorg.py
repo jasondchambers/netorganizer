@@ -4,6 +4,7 @@ import sys
 import merakidevicetableloaderfactory
 from configure import NetorgConfigurator
 from netorgmeraki import MerakiNetworkMapper
+from netorgsna import SnaAdapter
 from scan import NetorgScanner
 from generate import NetorgGenerator
 
@@ -18,6 +19,12 @@ def load_config():
     configurator.load()
     return configurator.get_config()
 
+def sna_is_configured(config):
+    """Determine if Secure Network Analytics has been configured."""
+    if 'sna.manager.host' in config.keys():
+        return True
+    return False
+
 def main():
     """Figure out what the user wants to happen and make it so."""
     parser = argparse.ArgumentParser(description='Organize your network.')
@@ -31,6 +38,8 @@ def main():
     group.add_argument("-o", "--organize", help="Organize the network",
                        action="store_true")
     group.add_argument("-d", "--devicetable", help="Export the device table",
+                       action="store_true")
+    group.add_argument("-p", "--pushchangestosna", help="Push grouping changes to Secure Network Analytics",
                        action="store_true")
     args = parser.parse_args()
     if args.configure:
@@ -64,6 +73,16 @@ def main():
         config = load_config()
         device_table = load_device_table(config)
         print(device_table.df.to_csv())
+    elif args.pushchangestosna:
+        config = load_config()
+        if not sna_is_configured(config):
+           print("Secure Network Analytics is not configured. Re-run with -c to configure.")
+        else:
+           print("Pushing changes to Secure Network Analytics")
+           device_table = load_device_table(config)
+           sna_adapter = SnaAdapter(config)
+           sna_adapter.sync_with(device_table.df)
+
     else:
         parser.print_help(sys.stderr)
 

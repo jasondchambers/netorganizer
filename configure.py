@@ -3,7 +3,10 @@
 import os
 import getpass
 import json
+
+import requests
 from netorgmeraki import MerakiWrapper
+from netorgsna import FailedToLogin, SnaSession
 
 class NetorgConfigurator:
     """All things associated with configuring Netorg"""
@@ -59,6 +62,39 @@ class NetorgConfigurator:
         self.config['serial_id'] = meraki_wrapper.get_serial_id()
         self.config['vlan_id'] = meraki_wrapper.get_vlan_id()
         self.config['vlan_subnet'] = meraki_wrapper.get_vlan_subnet()
+        self.generate_sna_config()
+
+    def generate_sna_config(self):
+        while True:
+            answer = input('Do you want to configure Secure Network Analytics? (y/n) [n]:')
+            if not answer or answer == 'n' or answer == 'N':
+                break
+            if answer == 'y' or answer == 'Y':
+                self.config['sna.manager.host'] = input('Manager host: ')
+                self.config['sna.manager.username'] = input('Manager username: ')
+                self.config['sna.manager.password'] = getpass.getpass('Manager password: ')
+                if self.isvalid_sna_config():
+                    break
+                self.remove_sna_config()
+
+    def isvalid_sna_config(self):
+        try:
+            sna_session = SnaSession(self.config['sna.manager.host']) 
+            sna_session.login(self.config['sna.manager.username'], self.config['sna.manager.password']) 
+            sna_session.logout()
+            print('Secure Network Analytics configuration is valid')
+            return True
+        except FailedToLogin as e:
+            print(f'Failed to login to Secure Network Analytics Manager at {self.config["sna.manager.host"]}')
+            return False
+        except requests.exceptions.ConnectionError:
+            print(f'Invalid or unreachable Secure Network Analytics Manager host {self.config["sna.manager.host"]}')
+            return False
+
+    def remove_sna_config(self):
+        self.config.pop('sna.manager.host')
+        self.config.pop('sna.manager.username')
+        self.config.pop('sna.manager.password')
 
     def get_config_filename(self) -> str:
         """Return the fully qualified config filename e.g. /a/b/.netorg.cfg"""
