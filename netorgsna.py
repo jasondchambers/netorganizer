@@ -12,10 +12,10 @@ except:
 class SnaAdapter:
     """Secure Network Analytics Adapter."""
 
-    def __init__(self,config) -> None:
+    def __init__(self, config) -> None:
         self.config = config
 
-    def sync_with(self,df):
+    def sync_with(self, df):
         """Synchronize Secure Network Analytics with the device table."""
         # pylint: disable=invalid-name
         hostgroups = self.build_hostgroups(df)
@@ -25,7 +25,7 @@ class SnaAdapter:
         sna_hostgroup_manager.push_changes(hostgroups)
         sna_session.logout()
 
-    def build_hostgroups(self,df):
+    def build_hostgroups(self, df):
         """From the specified DataFrame, build a dictionary of hostgroups.
         Returns something similar to the following:
         hostgroups = {
@@ -42,12 +42,12 @@ class SnaAdapter:
             hostgroups[group_name] = self.get_device_ips_in_group(df,group_name)
         return hostgroups
 
-    def get_groups(self,df) -> list :
+    def get_groups(self, df) -> list :
         """Produce a list of all unique groups in the device table."""
         # pylint: disable=invalid-name
         return df.group.unique().tolist()
 
-    def get_device_ips_in_group(self,df,group_name) -> list:
+    def get_device_ips_in_group(self, df, group_name) -> list:
         """Produce a list of all device IPs in specified group."""
         # pylint: disable=unused-variable
         # pylint: disable=invalid-name
@@ -82,7 +82,7 @@ class SnaHostGroupManager:
     INSIDE_HOSTS = 'Inside Hosts'
     NET_ORGANIZER_GROUPS = 'Net Organizer Groups'
 
-    def __init__(self,session) -> None:
+    def __init__(self, session) -> None:
         self.session = session
         self.hostgroups_to_create_set = set()
         self.hostgroups_to_update_set = set()
@@ -137,7 +137,7 @@ class SnaHostGroupManager:
                     create_set.add(added)
         return create_set
 
-    def create_hostgroups(self,hostgroups_to_create_set,hostgroups_changes): #Tested
+    def create_hostgroups(self, hostgroups_to_create_set, hostgroups_changes): #Tested
         """Create the hostgroups."""
         net_organizer_hostgroup_id = self.ensure_net_organizer_groups_exists()
         if not hostgroups_to_create_set:
@@ -147,7 +147,7 @@ class SnaHostGroupManager:
             print(f'Adding {hostgroup_name} {list_of_ips}')
             self.create_hostgroup(hostgroup_name, list_of_ips, net_organizer_hostgroup_id)
 
-    def create_hostgroup(self,name,list_of_ips_in_group, parent_id): # Tested
+    def create_hostgroup(self, name, list_of_ips_in_group, parent_id): # Tested
         """Create a single hostgroup."""
         request_headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
         request_data = [{
@@ -191,7 +191,7 @@ class SnaHostGroupManager:
                     update_set.add(hostgroup)
         return update_set
 
-    def update_hostgroups(self,hostgroups_to_update_set,hostgroups_changes):
+    def update_hostgroups(self, hostgroups_to_update_set, hostgroups_changes):
         """Update the hostgroups that have changed."""
         if not hostgroups_to_update_set:
             print('No host groups to update')
@@ -200,7 +200,7 @@ class SnaHostGroupManager:
             print(f'Updating {hostgroup_name} {id_to_update}')
             self.update_hostgroup(id_to_update,hostgroups_changes[hostgroup_name])
 
-    def update_hostgroup(self,id_to_update,new_ranges):
+    def update_hostgroup(self, id_to_update, new_ranges):
         """Update a single hostgroup."""
         url = f'https://{self.session.host}/smc-configuration/rest/v1/tenants/{self.session.tenant_id}/tags/{id_to_update}'
         response = self.session.api_session.request("GET", url, verify=False)
@@ -226,7 +226,7 @@ class SnaHostGroupManager:
                     delete_set.add(removed)
         return delete_set
 
-    def delete_hostgroups(self,hostgroups_to_delete_set): #Tested
+    def delete_hostgroups(self, hostgroups_to_delete_set): #Tested
         """Delete the hostgroups that are no longer needed."""
         if not hostgroups_to_delete_set:
             print('No host groups to delete')
@@ -235,7 +235,7 @@ class SnaHostGroupManager:
             print(f'Deleting {hostgroup_name} {id_to_delete}')
             self.delete_hostgroup(id_to_delete)
 
-    def delete_hostgroup(self,hostgroup_id): # Tested
+    def delete_hostgroup(self, hostgroup_id): # Tested
         """Delete a single hostgroup."""
         if hostgroup_id:
             url = f'https://{self.session.host}/smc-configuration/rest/v1/tenants/{self.session.tenant_id}/tags/{hostgroup_id}'
@@ -244,7 +244,7 @@ class SnaHostGroupManager:
                 raise FailedToDeleteHostGroup()
 
     @staticmethod # Tested
-    def get_group_children(root,hostgroup_id):
+    def get_group_children(root, hostgroup_id):
         """Get the children of a group."""
         group = list(filter(lambda hostgroup: hostgroup['id'] == hostgroup_id, root))[0]
         return group['children']
@@ -259,7 +259,7 @@ class SnaHostGroupManager:
             hostgroup_name_to_id_map[name] = hostgroup_id
         return hostgroup_name_to_id_map
 
-    def get_list_of_ips_for_hostgroup(self,hostgroup_id):
+    def get_list_of_ips_for_hostgroup(self, hostgroup_id):
         """Return the current list of IPs for a hostgroup in Secure Network Analytics."""
         url = f'https://{self.session.host}/smc-configuration/rest/v1/tenants/{self.session.tenant_id}/tags/{hostgroup_id}'
         response = self.session.api_session.request("GET", url, verify=False)
@@ -279,7 +279,7 @@ class SnaHostGroupManager:
         return net_organizer_hostgroup_id
 
     @staticmethod
-    def find_hostgroup_id_in_tags_data(tags,hostgroup_name):
+    def find_hostgroup_id_in_tags_data(tags, hostgroup_name):
         """Find the ID for a hostgroup by it's name in tags."""
         found_id = ''
         for tag in tags:
@@ -328,17 +328,17 @@ class SnaSession:
 
     XSRF_HEADER_NAME = 'X-XSRF-TOKEN'
 
-    def __init__(self,host) -> None:
+    def __init__(self, host) -> None:
         self.host = host
         self.api_session = None
         self.tenant_id = ''
 
-    def login(self,user,password):
+    def login(self, user, password):
         """Login with Secure Network Analytics and get/set the tenant id."""
         self.authenticate(user,password)
         self.get_set_tenant_id()
 
-    def authenticate(self,user,password):
+    def authenticate(self, user, password):
         """Authenticate with Secure Network Analytics."""
         self.api_session = requests.Session()
         uri = "https://" + self.host + "/token/v2/authenticate"

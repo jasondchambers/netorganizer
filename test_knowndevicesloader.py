@@ -18,7 +18,7 @@ class TestKnownDevicesLoader(unittest.TestCase):
         good_yaml += "    - Kitchen Appliances Fridge,68:a4:0e:2d:9a:91\n"
         return good_yaml
 
-    def inspect_output(self,devices):
+    def inspect_output(self, devices):
         """Inspect the out output from test."""
         self.assertEqual(3, len(devices))
         for device in devices:

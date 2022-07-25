@@ -6,7 +6,7 @@ import yaml
 class KnownDevicesLoader:
     """Load known devices."""
 
-    def __init__(self,filename='./devices.yml') -> None:
+    def __init__(self, filename='./devices.yml') -> None:
         self.filename = filename
 
     def load(self) -> list:
@@ -21,11 +21,11 @@ class KnownDevicesLoader:
             print(f'{self.filename} not found')
         return device_list
 
-    def load_data(self,data) -> list:
+    def load_data(self, data) -> list:
         """Load known devices."""
-        if not isinstance(data,dict):
+        if not isinstance(data, dict):
             raise ValueError("Invalid YAML")
-        if 'devices' not in data.keys():
+        if 'devices' not in data:
             raise ValueError("Invalid YAML")
         device_list = []
         devices = data['devices']

@@ -22,7 +22,7 @@ class MockKnownDevicesLoader:
         return [d['mac'] for d in MockKnownDevicesLoader.known_devices_list]
 
     # pylint: disable=unused-argument
-    def load(self,filename='./devices.yml') -> list:
+    def load(self, filename='./devices.yml') -> list:
         """Load the test data."""
         return MockKnownDevicesLoader.known_devices_list
 

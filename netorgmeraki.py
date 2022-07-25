@@ -134,7 +134,7 @@ class MerakiWrapper :
         return vlans[0]["id"]
 
     @staticmethod
-    def find_vlan_subnet(dashboard,network_id,vlan_id) -> str:
+    def find_vlan_subnet(dashboard, network_id, vlan_id) -> str:
         """Return the VLAN subnet."""
         vlan = dashboard.appliance.getNetworkApplianceVlan(network_id, str(vlan_id))
         return vlan['subnet']
@@ -169,7 +169,7 @@ class MerakiActiveClientsLoader:
     """Load active clients from Meraki."""
     # pylint: disable=too-few-public-methods
 
-    def __init__(self,meraki_dashboard,serial_id, vlan_id) -> None:
+    def __init__(self, meraki_dashboard, serial_id, vlan_id) -> None:
         self.dashboard = meraki_dashboard
         self.serial_id = serial_id
         self.vlan_id = vlan_id
@@ -211,7 +211,7 @@ class MerakiFixedIpReservationsLoader:
     """Load fixed IP reservations from Meraki."""
     # pylint: disable=too-few-public-methods
 
-    def __init__(self,meraki_dashboard,network_id,vlan_id) -> None:
+    def __init__(self, meraki_dashboard, network_id, vlan_id) -> None:
         self.dashboard = meraki_dashboard
         self.network_id = network_id
         self.vlan_id = vlan_id

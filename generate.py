@@ -42,22 +42,22 @@ class KnownDevicesGenerator:
     """Generates the known devices file (devices.yml)."""
 
     # pylint: disable=invalid-name
-    def get_devices_in_group(self,df,group,skip_these_macs) -> list :
+    def get_devices_in_group(self, df, group, skip_these_macs) -> list :
         """Produce a list of all devices in a group."""
-        l = []
+        devices = []
         # pylint: disable=unused-variable
         for index, row in df.query(f'group == "{group}"').iterrows():
             if row["mac"] not in skip_these_macs:
-                l.append(f'{row["name"]},{row["mac"]}')
+                devices.append(f'{row["name"]},{row["mac"]}')
             else:
                 print(f'KnownDevicesGenerator: Skipping {row["name"]},{row["mac"]}')
-        return l
+        return devices
 
-    def get_groups(self,df) -> list :
+    def get_groups(self, df) -> list :
         """Produce a list of all unique groups in the device table."""
         return df.group.unique().tolist()
 
-    def generate(self,device_table) -> str :
+    def generate(self, device_table) -> str :
         """From the device table, generate the known devices file (devices.yml)."""
         yaml_lines = []
         yaml_lines.append("devices:")
