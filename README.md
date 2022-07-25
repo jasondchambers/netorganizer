@@ -1,12 +1,14 @@
 # Net Organizer
 
-Although we are getting close to approaching releasable state, this project is still very much under development!
+Although close to approaching releasable state, this project is still very much under development!
 
 Net Organizer enables you to bring some order to the chaos that might be your network. It is essentially a simple IP Address Manager (IPAM). It enables you to take inventory of active hosts and to neatly classify each of them into groups. It will also manage fixed IP reservations for you. It can convert a dynamic IP or allocate a new fixed IP reservation for known hosts that do not have one. It can clean up lingering fixed IP reservations for unknown and in-active hosts. It can bring to your attention unknown hosts that are active on your network and invite you to classify them. 
 
 Along the way, it avoids network collisions and avoids disruptive re-mapping of the network space.
 
 Once hosts are classifed you can export the device details for use by other tools - for example, Cisco Secure Network Analytics.
+
+It is hoped that by better organizing and classifying the hosts, higher quality data can be fed into Cisco Secure Network Analytics. This in turn, can be used to provide the foundation for an ML based approach to classification which has long been a curiosity of mine.
 
 ## Usage
 
