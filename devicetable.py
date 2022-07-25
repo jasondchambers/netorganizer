@@ -8,20 +8,6 @@ class DeviceTable :
         # pylint: disable=invalid-name
         self.df = pd.DataFrame(data)
 
-    def has_unique_macs(self) -> bool:
-        """Return True if the device table has unique MACs."""
-        if len(self.df.mac.unique() == self.df.shape[0]) :
-            return True
-        print('Duplicate MACs in device table')
-        return False
-
-    def has_unique_ips(self) -> bool:
-        """Return True if the device table has unique IP addresses."""
-        if len(self.df.ip.unique() == self.df.shape[0]) :
-            return True
-        print('Duplicate IPs in device table')
-        return False
-
 class DeviceTableBuilder :
     """Efficiently Build a DeviceTable."""
     def __init__(self) -> None:
