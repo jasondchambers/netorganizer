@@ -35,14 +35,14 @@ class TestKnownDevicesLoader(unittest.TestCase):
     def test_load_good_yaml(self):
         """Test well-formed YAML load."""
         known_devices_loader = KnownDevicesLoader()
-        devices = known_devices_loader.load_from_string(TestKnownDevicesLoader.generate_test_data())
+        devices = list(known_devices_loader.load_from_string(TestKnownDevicesLoader.generate_test_data()))
         self.inspect_output(devices)
 
     def test_load_bad_yaml(self):
         """Test invalid YAML load."""
         bad_yaml = "Not YAML at all\n"
         known_devices_loader = KnownDevicesLoader()
-        self.assertRaises(ValueError, known_devices_loader.load_from_string, bad_yaml)
+        self.assertRaises(ValueError, lambda data : list(known_devices_loader.load_from_string(data)), bad_yaml)
 
     def test_load_file_not_found(self):
         """Test load with file that does not exist."""

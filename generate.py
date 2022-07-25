@@ -1,5 +1,8 @@
 """This is the main module for Netorg generate."""
 
+import io
+import os
+from typing import Generator
 from deepdiff import DeepDiff
 from knowndevicesloader import KnownDevicesLoader
 
@@ -19,8 +22,7 @@ class NetorgGenerator:
             if 'iterable_item_added' in diff:
                 print("  Adding devices:")
                 added_dict = diff['iterable_item_added']
-                # pylint: disable=unused-variable
-                for key,val in added_dict.items():
+                for val in added_dict.values():
                     print(f'    {val["group"]}: {val["name"]} {val["mac"]}')
             else:
                 print("  There are no new devices")
@@ -42,36 +44,38 @@ class KnownDevicesGenerator:
     """Generates the known devices file (devices.yml)."""
 
     # pylint: disable=invalid-name
-    def get_devices_in_group(self, df, group, skip_these_macs) -> list :
+    def get_devices_in_group(self, df, group, skip_these_macs) -> Generator[str, None, None] :
         """Produce a list of all devices in a group."""
-        devices = []
         # pylint: disable=unused-variable
         for index, row in df.query(f'group == "{group}"').iterrows():
             if row["mac"] not in skip_these_macs:
-                devices.append(f'{row["name"]},{row["mac"]}')
+                yield f'{row["name"]},{row["mac"]}'
             else:
                 print(f'KnownDevicesGenerator: Skipping {row["name"]},{row["mac"]}')
-        return devices
+        return
 
-    def get_groups(self, df) -> list :
+    def get_groups(self,df) -> Generator[str, None, None]  :
         """Produce a list of all unique groups in the device table."""
-        return df.group.unique().tolist()
+        for item in df.group.unique():
+            yield item
 
     def generate(self, device_table) -> str :
         """From the device table, generate the known devices file (devices.yml)."""
-        yaml_lines = []
-        yaml_lines.append("devices:")
-        df = device_table.df
-        skip_these_macs = df.query("not known and reserved and not active").mac.unique().tolist()
-        groups = self.get_groups(df)
-        for group_name in groups :
-            if group_name == "" :
-                # Classify unknown devices as unclassified
-                yaml_lines.append("  unclassified:")
-            else :
-                yaml_lines.append(f'  {group_name}:')
-            devices_in_group = self.get_devices_in_group(df,group_name,skip_these_macs)
-            for device_in_group in devices_in_group :
-                yaml_lines.append(f'    - {device_in_group}')
-        s = '\n'.join(yaml_lines)
-        return s
+        with io.StringIO() as yaml_lines:
+            yaml_lines.write("devices:")
+            yaml_lines.write(os.linesep)
+            df = device_table.df
+            skip_these_macs = df.query("not known and reserved and not active").mac.unique().tolist()
+            for group_name in self.get_groups(df) :
+                if group_name == "" :
+                    # Classify unknown devices as unclassified
+                    yaml_lines.write("  unclassified:")
+                    yaml_lines.write(os.linesep)
+                else :
+                    yaml_lines.write(f'  {group_name}:')
+                    yaml_lines.write(os.linesep)
+                devices_in_group = list(self.get_devices_in_group(df, group_name, skip_these_macs))
+                for device_in_group in devices_in_group :
+                    yaml_lines.write(f'    - {device_in_group}')
+                    yaml_lines.write(os.linesep)
+            return yaml_lines.getvalue()

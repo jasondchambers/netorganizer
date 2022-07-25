@@ -100,10 +100,10 @@ class TestKnownDevicesGenerator(unittest.TestCase):
         expected_yaml += "  kitchen_appliances:\n"
         expected_yaml += "    - Kitchen Appliances Fridge,68:a4:0e:2d:9a:91\n"
         known_devices_loader = KnownDevicesLoader()
-        expected = known_devices_loader.load_from_string(expected_yaml)
+        expected = list(known_devices_loader.load_from_string(expected_yaml))
         df_expected = pd.DataFrame(expected)
-        actual = known_devices_loader.load_from_string(
-            known_devices_generator.generate(device_table))
+        actual = list(known_devices_loader.load_from_string(
+            known_devices_generator.generate(device_table)))
         df_actual = pd.DataFrame(actual)
         self.assertEqual(True,df_actual.equals(df_expected))
 
@@ -116,7 +116,7 @@ class TestKnownDevicesGenerator(unittest.TestCase):
         old_yaml += "  kitchen_appliances:\n"
         old_yaml += "    - Kitchen Appliances Fridge,68:a4:0e:2d:9a:91\n"
         known_devices_loader = KnownDevicesLoader()
-        old_list = known_devices_loader.load_from_string(old_yaml)
+        old_list = list(known_devices_loader.load_from_string(old_yaml))
         new_yaml = "devices:\n"
         new_yaml += "  eero:\n"
         new_yaml += "    - Eero Beacon Lady Pit,18:90:88:28:eb:5b\n"
@@ -126,7 +126,7 @@ class TestKnownDevicesGenerator(unittest.TestCase):
         new_yaml += "  speakers:\n"
         new_yaml += "    - Den Speaker,68:a4:0e:2d:9a:95\n"
         known_devices_loader = KnownDevicesLoader()
-        new_list = known_devices_loader.load_from_string(new_yaml)
+        new_list = list(known_devices_loader.load_from_string(new_yaml))
         NetorgGenerator.show_diffs(old_list,new_list)
 
     def test_meraki_fixed_ip_reservations_generator(self):

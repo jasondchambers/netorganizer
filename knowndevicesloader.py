@@ -1,5 +1,6 @@
 """Module for loading known devices."""
 
+from typing import Generator
 import os.path
 import yaml
 
@@ -9,29 +10,14 @@ class KnownDevicesLoader:
     def __init__(self, filename='./devices.yml') -> None:
         self.filename = filename
 
-    def load(self) -> list:
-        """Load known devices from (YAML) file."""
-        device_list = []
-        if os.path.exists(self.filename) :
-            print(f'Loading known devices from {self.filename}')
-            with open(self.filename, encoding='utf8') as known_devices_file:
-                data = yaml.load(known_devices_file, Loader=yaml.FullLoader)
-                return self.load_data(data)
-        else:
-            print(f'{self.filename} not found')
-        return device_list
-
-    def load_data(self, data) -> list:
+    def __load_data(self, data) -> Generator[dict, None, None]:
         """Load known devices."""
         if not isinstance(data, dict):
             raise ValueError("Invalid YAML")
         if 'devices' not in data:
             raise ValueError("Invalid YAML")
-        device_list = []
         devices = data['devices']
-        device_group_names = devices.keys()
-        for device_group_name in device_group_names:
-            devices_in_group = devices[device_group_name]
+        for device_group_name, devices_in_group in devices.items():
             for device_in_group in devices_in_group:
                 device_in_group_str = device_in_group.split(',')
                 device_name = device_in_group_str[0]
@@ -40,10 +26,22 @@ class KnownDevicesLoader:
                     'name': device_name,
                     'mac': device_mac,
                     'group': device_group_name}
-                device_list.append(device)
-        return device_list
+                yield device
+        return
 
-    def load_from_string(self,string) -> list:
+    def load(self) -> Generator[dict, None, None]:
+        """Load known devices from (YAML) file."""
+        if os.path.exists(self.filename) :
+            print(f'Loading known devices from {self.filename}')
+            data = []
+            with open(self.filename, encoding='utf8') as known_devices_file:
+                data = yaml.load_all(known_devices_file, Loader=yaml.FullLoader) # TODO buffered read using ruamel in future
+            return self.__load_data(data)
+        else:
+            print(f'{self.filename} not found')
+        return
+
+    def load_from_string(self,string) -> Generator[dict, None, None]:
         """Load known devices from (YAML) string."""
-        data = yaml.safe_load(string)
-        return self.load_data(data)
+        data = yaml.safe_load(string) # TODO buffered read using ruamel in future
+        return self.__load_data(data)

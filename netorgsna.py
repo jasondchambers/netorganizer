@@ -1,4 +1,5 @@
 """Module for integrating Secure Network Analytics."""
+from typing import Generator
 import re
 import json
 import requests
@@ -37,24 +38,22 @@ class SnaAdapter:
         """
         # pylint: disable=invalid-name
         hostgroups = {}
-        groups = self.get_groups(df)
-        for group_name in groups :
-            hostgroups[group_name] = self.get_device_ips_in_group(df,group_name)
+        for group_name in self.get_groups(df) :
+            hostgroups[group_name] = list(self.get_device_ips_in_group(df, group_name))
         return hostgroups
 
-    def get_groups(self, df) -> list :
+    def get_groups(self,df) -> Generator[str, None, None] :
         """Produce a list of all unique groups in the device table."""
         # pylint: disable=invalid-name
-        return df.group.unique().tolist()
+        for item in df.group.unique():
+            yield item
 
-    def get_device_ips_in_group(self, df, group_name) -> list:
+    def get_device_ips_in_group(self, df, group_name) -> Generator[str, None, None]:
         """Produce a list of all device IPs in specified group."""
         # pylint: disable=unused-variable
         # pylint: disable=invalid-name
-        list_of_ips = []
         for index, row in df.query(f'group == "{group_name}"').iterrows():
-            list_of_ips.append(row["ip"])
-        return list_of_ips
+            yield row["ip"]
 
 class FailedToLogin(Exception) :
     # pylint: disable=missing-class-docstring
@@ -110,10 +109,10 @@ class SnaHostGroupManager:
             response = self.session.api_session.request("GET", url, verify=False)
             if response.status_code == 200:
                 hostgroup_tree = json.loads(response.content)["data"]
-                inside_host_children = SnaHostGroupManager.get_group_children(hostgroup_tree[0]['root'],inside_hosts_id)
-                net_org_hostgroup_children = SnaHostGroupManager.get_group_children(inside_host_children,net_organizer_groups_id)
+                inside_host_children = SnaHostGroupManager.get_group_children(hostgroup_tree[0]['root'], inside_hosts_id)
+                net_org_hostgroup_children = SnaHostGroupManager.get_group_children(inside_host_children, net_organizer_groups_id)
                 hostgroup_map = SnaHostGroupManager.build_hostgroup_name_to_id_map(net_org_hostgroup_children)
-                for name,hostgroup_id in hostgroup_map.items():
+                for name, hostgroup_id in hostgroup_map.items():
                     current_hostgroups[name] = self.get_list_of_ips_for_hostgroup(hostgroup_id)
         return current_hostgroups
 

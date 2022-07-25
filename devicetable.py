@@ -1,6 +1,7 @@
 """All the things associated with Loading, building and accessing a device table."""
 import pandas as pd
 from pandas import DataFrame
+from collections import defaultdict
 
 class DeviceTable :
     """The device table is the heart of Network Organizer."""
@@ -11,7 +12,7 @@ class DeviceTable :
 class DeviceTableBuilder :
     """Efficiently Build a DeviceTable."""
     def __init__(self) -> None:
-        self.__devices_dict = {}
+        self.__devices_dict = defaultdict({})
 
     @staticmethod
     def generate_new_record() -> dict:
@@ -24,14 +25,11 @@ class DeviceTableBuilder :
             'group': 'unclassified',
             'name': ''}
 
-    def get_details(self,mac) -> dict:
+    def get_details(self, mac) -> dict:
         """For a given device identified by it's MAC, return the details."""
-        if mac in self.__devices_dict:
-            return self.__devices_dict[mac]
-        self.__devices_dict[mac] = {}
         return self.__devices_dict[mac]
 
-    def set_details(self,mac,details) -> None:
+    def set_details(self, mac, details) -> None:
         """Set the details for a given device identified by it's MAC."""
         self.__devices_dict[mac] = details
 
