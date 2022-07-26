@@ -21,7 +21,7 @@ def load_config():
 
 def sna_is_configured(config):
     """Determine if Secure Network Analytics has been configured."""
-    if 'sna.manager.host' in config.keys():
+    if 'sna.manager.host' in config:
         return True
     return False
 

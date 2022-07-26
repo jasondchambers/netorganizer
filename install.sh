@@ -5,23 +5,25 @@ if [[ -z "${NETORG_HOME}" ]] ; then
    exit 2
 fi
 
+set -eo pipefail
+
 OS=`uname`
 case $OS in
   'Linux')
     echo "Installing for Linux"
+    apt update
     echo "Installing pip3"
     echo "==============="
-    sudo apt install -y python3-pip
+    apt install -y python3-pip
     echo "Installing python3-venv"
     echo "======================="
-    sudo apt install -y python3-venv
+    apt install -y python3-venv
     ;;
   'Darwin')
     echo "Installing for macOS"
     python3 -m pip install --upgrade pip
     ;;
 esac
-
 
 echo "Creating virtual environment"
 echo "============================"

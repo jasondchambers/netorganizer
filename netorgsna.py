@@ -341,7 +341,7 @@ class SnaSession:
     def authenticate(self, user, password):
         """Authenticate with Secure Network Analytics."""
         self.api_session = requests.Session()
-        uri = "https://" + self.host + "/token/v2/authenticate"
+        uri = f'https://{self.host}/token/v2/authenticate'
         login_request_data = {
             "username": user,
             "password": password
@@ -358,7 +358,7 @@ class SnaSession:
 
     def get_set_tenant_id(self):
         """Discover the tenant id and set it to self.tenant_id."""
-        url = 'https://' + self.host + '/sw-reporting/v1/tenants/'
+        url = f'https://{self.host}/sw-reporting/v1/tenants/'
         response = self.api_session.request("GET", url, verify=False)
         if response.status_code == 200:
             tenant_list = json.loads(response.content)["data"]
@@ -367,6 +367,6 @@ class SnaSession:
     def logout(self):
         """Logout of Secure Network Analytics."""
         # pylint: disable=unused-variable
-        uri = 'https://' + self.host + '/token'
+        uri = f'https://{self.host}/token'
         response = self.api_session.delete(uri, timeout=30, verify=False)
         self.api_session.headers.update({SnaSession.XSRF_HEADER_NAME: None})
