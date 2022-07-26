@@ -25,6 +25,59 @@ def sna_is_configured(config):
         return True
     return False
 
+def do_configure() -> None:
+    """Perform configure."""
+    print("Configure")
+    configurator = NetorgConfigurator()
+    configurator.generate()
+    configurator.save()
+
+def do_generate() -> None:
+    """Perform generate (devices.yml)."""
+    print("Generate")
+    config = load_config()
+    device_table = load_device_table(config)
+    generator = NetorgGenerator(config, device_table)
+    generator.generate()
+
+def do_scan() -> None:
+    """Perform scan."""
+    print("Scan")
+    config = load_config()
+    device_table = load_device_table(config)
+    scanner = NetorgScanner(device_table)
+    scanner.run()
+    scanner.report()
+
+def do_organize() -> None:
+    """Perform organize."""
+    print("Organize")
+    config = load_config()
+    device_table = load_device_table(config)
+    generator = NetorgGenerator(config, device_table)
+    generator.generate()
+    meraki_network_mapper = MerakiNetworkMapper(config, device_table)
+    meraki_network_mapper.update_fixed_ip_reservations()
+
+def do_devicetable() -> None:
+    """Perform devicetable (export)."""
+    print("Export the device table")
+    config = load_config()
+    device_table = load_device_table(config)
+    print(device_table.df.to_csv())
+
+def do_push_changes_to_sna() -> None:
+    """Perform push changes to SNA."""
+    print("Pushing changes to Secure Network Analytics")
+    config = load_config()
+    if not sna_is_configured(config):
+        print("Secure Network Analytics is not configured. Re-run with -c to configure.")
+    else:
+        print("Pushing changes to Secure Network Analytics")
+        device_table = load_device_table(config)
+        sna_adapter = SnaAdapter(config)
+        sna_adapter.sync_with(device_table.df)
+
 def main():
     """Figure out what the user wants to happen and make it so."""
     parser = argparse.ArgumentParser(description='Organize your network.')
@@ -39,50 +92,22 @@ def main():
                        action="store_true")
     group.add_argument("-d", "--devicetable", help="Export the device table",
                        action="store_true")
-    group.add_argument("-p", "--pushchangestosna", help="Push grouping changes to Secure Network Analytics",
+    group.add_argument("-p", "--pushchangestosna",
+                       help="Push grouping changes to Secure Network Analytics",
                        action="store_true")
     args = parser.parse_args()
     if args.configure:
-        print("Configure")
-        configurator = NetorgConfigurator()
-        configurator.generate()
-        configurator.save()
+        do_configure()
     elif args.generate:
-        print("Generate")
-        config = load_config()
-        device_table = load_device_table(config)
-        generator = NetorgGenerator(config, device_table)
-        generator.generate()
+        do_generate()
     elif args.scan:
-        print("Scan")
-        config = load_config()
-        device_table = load_device_table(config)
-        scanner = NetorgScanner(device_table)
-        scanner.run()
-        scanner.report()
+        do_scan()
     elif args.organize:
-        print("Organize")
-        config = load_config()
-        device_table = load_device_table(config)
-        generator = NetorgGenerator(config, device_table)
-        generator.generate()
-        meraki_network_mapper = MerakiNetworkMapper(config, device_table)
-        meraki_network_mapper.update_fixed_ip_reservations()
+        do_organize()
     elif args.devicetable:
-        print("Export the device table")
-        config = load_config()
-        device_table = load_device_table(config)
-        print(device_table.df.to_csv())
+        do_devicetable()
     elif args.pushchangestosna:
-        config = load_config()
-        if not sna_is_configured(config):
-           print("Secure Network Analytics is not configured. Re-run with -c to configure.")
-        else:
-           print("Pushing changes to Secure Network Analytics")
-           device_table = load_device_table(config)
-           sna_adapter = SnaAdapter(config)
-           sna_adapter.sync_with(device_table.df)
-
+        do_push_changes_to_sna()
     else:
         parser.print_help(sys.stderr)
 
