@@ -2,3 +2,4 @@ meraki == 1.22.1
 pandas == 1.4.3
 pyyaml == 6.0
 deepdiff
+requests

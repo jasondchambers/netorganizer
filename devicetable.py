@@ -11,7 +11,7 @@ class DeviceTable :
 class DeviceTableBuilder :
     """Efficiently Build a DeviceTable."""
     def __init__(self) -> None:
-        self.devices_dict = {}
+        self.__devices_dict = {}
 
     @staticmethod
     def generate_new_record() -> dict:
@@ -26,21 +26,21 @@ class DeviceTableBuilder :
 
     def get_details(self,mac) -> dict:
         """For a given device identified by it's MAC, return the details."""
-        if mac in self.devices_dict:
-            return self.devices_dict[mac]
-        self.devices_dict[mac] = {}
-        return self.devices_dict[mac]
+        if mac in self.__devices_dict:
+            return self.__devices_dict[mac]
+        self.__devices_dict[mac] = {}
+        return self.__devices_dict[mac]
 
     def set_details(self,mac,details) -> None:
         """Set the details for a given device identified by it's MAC."""
-        self.devices_dict[mac] = details
+        self.__devices_dict[mac] = details
 
     def build(self) -> DeviceTable:
         """Build the DeviceTable."""
         data = []
         # pylint: disable=consider-using-dict-items
-        for mac in self.devices_dict:
-            details = self.devices_dict[mac]
+        for mac in self.__devices_dict:
+            details = self.__devices_dict[mac]
             device_mac_dict = {'mac': mac}
             merged = {**device_mac_dict,**details}
             data.append(merged)
@@ -49,7 +49,7 @@ class DeviceTableBuilder :
 class DeviceTableLoader :
     """Load data into the DeviceTable."""
 
-    def __init__(self,known_devices_loader,active_clients_loader,
+    def __init__(self, known_devices_loader, active_clients_loader,
                  fixed_ip_reservations_loader) -> None:
         self.device_table_builder = DeviceTableBuilder()
         self.known_devices_loader = known_devices_loader
@@ -67,7 +67,7 @@ class DeviceTableLoader :
             record['name'] = device['name']
             self.device_table_builder.set_details(device['mac'], record)
 
-    def load_active_clients(self) :
+    def load_active_clients(self) -> None:
         """Load active clients into the DeviceTable."""
         active_clients = self.active_clients_loader.load()
         for active_client in active_clients :
@@ -85,7 +85,7 @@ class DeviceTableLoader :
                 record['name'] = active_client['description']
                 self.device_table_builder.set_details(active_client['mac'], record)
 
-    def load_fixed_ip_reservations(self) :
+    def load_fixed_ip_reservations(self) -> None:
         """Load fixed IP reservations into the DeviceTable."""
         # pylint: disable=line-too-long
         fixed_ip_reservations = self.fixed_ip_reservations_loader.load()

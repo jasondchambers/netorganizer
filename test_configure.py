@@ -27,5 +27,10 @@ class TestNetorgConfigurator(unittest.TestCase) :
         netorg_configurator.save()
         netorg_configurator2 = NetorgConfigurator()
         netorg_configurator2.load()
-        self.assertDictEqual(mock_get_config.return_value,netorg_configurator2.config)
+        self.assertDictEqual(mock_get_config.return_value,netorg_configurator2.get_config())
         os.remove(temp_config_file)
+
+    def test_nothing_to_save(self):
+        """Test attempt to NetorgConfigurator.save() an empty config"""
+        netorg_configurator = NetorgConfigurator()
+        netorg_configurator.save()
