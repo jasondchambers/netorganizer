@@ -2,8 +2,8 @@
 
 if [[ -z "${NETORG_HOME}" ]] ; then
    (>&2 echo "Please set NETORG_HOME environment variable before proceeding")
-   exit 1
+   exit 2
 fi
 
-source .venv/bin/activate 
+. .venv/bin/activate 
 pylint *.py
