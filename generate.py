@@ -52,7 +52,6 @@ class KnownDevicesGenerator:
                 yield f'{row["name"]},{row["mac"]}'
             else:
                 print(f'KnownDevicesGenerator: Skipping {row["name"]},{row["mac"]}')
-        return
 
     def get_groups(self,df) -> Generator[str, None, None]  :
         """Produce a list of all unique groups in the device table."""
@@ -66,7 +65,7 @@ class KnownDevicesGenerator:
             yaml_lines.write(os.linesep)
             df = device_table.df
             skip_these_macs = df.query("not known and reserved and not active").mac.unique().tolist()
-            for group_name in self.get_groups(df) :
+            for group_name in self.get_groups(df):
                 if group_name == "" :
                     # Classify unknown devices as unclassified
                     yaml_lines.write("  unclassified:")

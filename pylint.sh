@@ -6,4 +6,4 @@ if [[ -z "${NETORG_HOME}" ]] ; then
 fi
 
 . .venv/bin/activate 
-pylint *.py
+python3 -m pylint *.py

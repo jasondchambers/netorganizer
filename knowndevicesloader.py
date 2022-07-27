@@ -27,21 +27,19 @@ class KnownDevicesLoader:
                     'mac': device_mac,
                     'group': device_group_name}
                 yield device
-        return
 
     def load(self) -> Generator[dict, None, None]:
         """Load known devices from (YAML) file."""
-        if os.path.exists(self.filename) :
-            print(f'Loading known devices from {self.filename}')
-            data = []
-            with open(self.filename, encoding='utf8') as known_devices_file:
-                data = yaml.load_all(known_devices_file, Loader=yaml.FullLoader) # TODO buffered read using ruamel in future
-            return self.__load_data(data)
-        else:
+        if not os.path.exists(self.filename):
             print(f'{self.filename} not found')
-        return
+            return
+        print(f'Loading known devices from {self.filename}')
+        data = []
+        with open(self.filename, encoding='utf8') as known_devices_file:
+            data = yaml.load_all(known_devices_file, Loader=yaml.FullLoader) # TODO buffered read using ruamel in future
+        yield from self.__load_data(data)
 
     def load_from_string(self,string) -> Generator[dict, None, None]:
         """Load known devices from (YAML) string."""
         data = yaml.safe_load(string) # TODO buffered read using ruamel in future
-        return self.__load_data(data)
+        yield from self.__load_data(data)

@@ -1,7 +1,7 @@
 """All the things associated with Loading, building and accessing a device table."""
+from collections import defaultdict
 import pandas as pd
 from pandas import DataFrame
-from collections import defaultdict
 
 class DeviceTable :
     """The device table is the heart of Network Organizer."""
@@ -57,7 +57,7 @@ class DeviceTableLoader :
     def load_known(self) -> None:
         """Load known devices into the DeviceTable."""
         known_devices = self.known_devices_loader.load()
-        for device in known_devices :
+        for device in known_devices:
             # All we know at this point is the device is known
             record = DeviceTableBuilder.generate_new_record()
             record['known'] = True
@@ -68,7 +68,7 @@ class DeviceTableLoader :
     def load_active_clients(self) -> None:
         """Load active clients into the DeviceTable."""
         active_clients = self.active_clients_loader.load()
-        for active_client in active_clients :
+        for active_client in active_clients:
             record = self.device_table_builder.get_details(active_client['mac'])
             if record:
                 # device has been loaded already

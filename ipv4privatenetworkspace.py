@@ -39,7 +39,7 @@ class Ipv4PrivateNetworkSpace :
 
     def allocate_specific_address(self, ip_address) :
         """Allocate a specific IP address."""
-        if not ip_address in self.__address_set:
+        if ip_address not in self.__address_set:
             raise ValueError(f'specified ip_address not in {self.cidr}')
         if ip_address in self.__used_set:
             raise ValueError("specified ip_address already in use")
