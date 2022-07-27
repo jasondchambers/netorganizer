@@ -16,7 +16,7 @@ class SnaAdapter:
     def __init__(self, config) -> None:
         self.config = config
 
-    def sync_with(self, df):
+    def sync_with(self, df) -> None:
         """Synchronize Secure Network Analytics with the device table."""
         # pylint: disable=invalid-name
         hostgroups = self.build_hostgroups(df)
@@ -26,7 +26,7 @@ class SnaAdapter:
         sna_hostgroup_manager.push_changes(hostgroups)
         sna_session.logout()
 
-    def build_hostgroups(self, df):
+    def build_hostgroups(self, df) -> dict:
         """From the specified DataFrame, build a dictionary of hostgroups.
         Returns something similar to the following:
         hostgroups = {
@@ -42,7 +42,7 @@ class SnaAdapter:
             hostgroups[group_name] = list(self.get_device_ips_in_group(df, group_name))
         return hostgroups
 
-    def get_groups(self,df) -> Generator[str, None, None] :
+    def get_groups(self,df) -> Generator[str, None, None]:
         """Produce a list of all unique groups in the device table."""
         # pylint: disable=invalid-name
         for item in df.group.unique():
@@ -355,7 +355,7 @@ class SnaSession:
         else:
             raise FailedToLogin()
 
-    def get_set_tenant_id(self):
+    def get_set_tenant_id(self) -> str:
         """Discover the tenant id and set it to self.tenant_id."""
         url = f'https://{self.host}/sw-reporting/v1/tenants/'
         response = self.api_session.request("GET", url, verify=False)
@@ -363,7 +363,7 @@ class SnaSession:
             tenant_list = json.loads(response.content)["data"]
             self.tenant_id = tenant_list[0]["id"]
 
-    def logout(self):
+    def logout(self) -> None:
         """Logout of Secure Network Analytics."""
         # pylint: disable=unused-variable
         uri = f'https://{self.host}/token'

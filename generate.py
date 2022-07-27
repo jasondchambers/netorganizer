@@ -9,12 +9,12 @@ from knowndevicesloader import KnownDevicesLoader
 class NetorgGenerator:
     """All things associated with Netorg generate"""
 
-    def __init__(self, config, device_table):
+    def __init__(self, config, device_table) -> None:
         self.device_table = device_table
         self.devices_yml_path = config['devices_yml']
 
     @staticmethod
-    def show_diffs(old_list, new_list):
+    def show_diffs(old_list, new_list) -> None:
         """Show the before and after of the known devices to highlight new devices."""
         diff = DeepDiff(old_list, new_list)
         if diff:
@@ -29,7 +29,7 @@ class NetorgGenerator:
         else:
             print("NetorgGenerator: There are no changes to known devices (devices.yml)")
 
-    def generate(self) :
+    def generate(self) -> None:
         """Genereate the known devices file (devices.yml)."""
         known_devices_generator = KnownDevicesGenerator()
         known_devices_loader = KnownDevicesLoader(self.devices_yml_path)
@@ -44,7 +44,7 @@ class KnownDevicesGenerator:
     """Generates the known devices file (devices.yml)."""
 
     # pylint: disable=invalid-name
-    def get_devices_in_group(self, df, group, skip_these_macs) -> Generator[str, None, None] :
+    def get_devices_in_group(self, df, group, skip_these_macs) -> Generator[str, None, None]:
         """Produce a list of all devices in a group."""
         # pylint: disable=unused-variable
         for index, row in df.query(f'group == "{group}"').iterrows():
@@ -53,12 +53,12 @@ class KnownDevicesGenerator:
             else:
                 print(f'KnownDevicesGenerator: Skipping {row["name"]},{row["mac"]}')
 
-    def get_groups(self,df) -> Generator[str, None, None]  :
+    def get_groups(self,df) -> Generator[str, None, None]:
         """Produce a list of all unique groups in the device table."""
         for item in df.group.unique():
             yield item
 
-    def generate(self, device_table) -> str :
+    def generate(self, device_table) -> str:
         """From the device table, generate the known devices file (devices.yml)."""
         with io.StringIO() as yaml_lines:
             yaml_lines.write("devices:")

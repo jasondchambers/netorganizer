@@ -54,7 +54,7 @@ class NetorgScanner:
         # pylint: disable=invalid-name
         # pylint: disable=unused-variable
         df = self.device_table.df
-        for k, v in self.analysis.items():
+        for v in self.analysis.values():
             query_result_df = df.query(v['query'])
             v['device_names'] = query_result_df['name'].values.tolist()
 
@@ -62,7 +62,7 @@ class NetorgScanner:
         """Report on the findings discovered by run()."""
         # pylint: disable=invalid-name
         # pylint: disable=unused-variable
-        for k, v in self.analysis.items():
+        for v in self.analysis.values():
             if len(v["device_names"]) == 0:
                 print(f'Did not find any devices that are: {v["query"]}')
             else:

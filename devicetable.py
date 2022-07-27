@@ -108,7 +108,7 @@ class DeviceTableLoader :
                     record['name'] = fixed_ip_reservation_details['name']
                     self.device_table_builder.set_details(mac, record)
 
-    def load_all(self) -> DataFrame :
+    def load_all(self) -> DataFrame:
         """Load everything into the DeviceTable."""
         self.load_known()
         self.load_active_clients()
