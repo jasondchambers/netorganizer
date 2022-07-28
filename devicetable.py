@@ -12,7 +12,7 @@ class DeviceTable :
 class DeviceTableBuilder :
     """Efficiently Build a DeviceTable."""
     def __init__(self) -> None:
-        self.__devices_dict = defaultdict({})
+        self.__devices_dict = defaultdict(lambda _: {})
 
     @staticmethod
     def generate_new_record() -> dict:

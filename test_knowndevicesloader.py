@@ -47,7 +47,7 @@ class TestKnownDevicesLoader(unittest.TestCase):
     def test_load_file_not_found(self):
         """Test load with file that does not exist."""
         known_devices_loader = KnownDevicesLoader(filename="/does/not/exist.yml")
-        devices = known_devices_loader.load()
+        devices = list(known_devices_loader.load())
         self.assertEqual(len(devices), 0)
 
     def test_load_good_yaml_from_file(self):
@@ -58,7 +58,7 @@ class TestKnownDevicesLoader(unittest.TestCase):
             yaml_fp.write(TestKnownDevicesLoader.generate_test_data())
             yaml_fp.close()
             known_devices_loader = KnownDevicesLoader(filename=temp_file.name)
-            devices = known_devices_loader.load()
+            devices = list(known_devices_loader.load())
             self.inspect_output(devices)
 
     def test_load_bad_yaml_from_file(self):
@@ -69,4 +69,4 @@ class TestKnownDevicesLoader(unittest.TestCase):
             yaml_fp.write('Not YAML at all')
             yaml_fp.close()
             known_devices_loader = KnownDevicesLoader(filename=temp_file.name)
-            self.assertRaises(ValueError, known_devices_loader.load)
+            self.assertRaises(ValueError, lambda _: known_devices_loader.load())
