@@ -69,4 +69,4 @@ class TestKnownDevicesLoader(unittest.TestCase):
             yaml_fp.write('Not YAML at all')
             yaml_fp.close()
             known_devices_loader = KnownDevicesLoader(filename=temp_file.name)
-            self.assertRaises(ValueError, lambda _: known_devices_loader.load())
+            self.assertRaises(ValueError, lambda : known_devices_loader.load())
