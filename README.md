@@ -10,6 +10,10 @@ Once hosts are classifed you can export the device details for use by other tool
 
 It is hoped that by better organizing and classifying the hosts, higher quality data can be fed into Cisco Secure Network Analytics. This in turn, can be used to provide the foundation for an ML based approach to classification which has long been a curiosity of mine.
 
+You do not need to run Net Organizer on the subject network itself. This is because all the information it needs about the network is obtained via the Meraki Dashboard API which resides in the cloud.
+
+If you prefer to run Net Organizer in a container, follow these [instructions](CONTAINERS_README.md).
+
 ## Usage
 
 The --configure feature is required to get started and is also used if there are changes to the network configuration or API key.
@@ -66,6 +70,8 @@ https://developer.cisco.com/meraki/api-v1/#!authorization/obtaining-your-meraki-
 Record the API key somewhere as you will be prompted for it during subsequent phases of the installation and configuration of Net Organizer.
 
 ### 2. Installation
+
+If you prefer to run Net Organizer in a container, follow these instructions instead.
 
 This has been developed and tested for Python 3.10.5 on macOS 12.4/Monterey and on Python 3.8.10 on Ubuntu 20.04. It's possible that other combinations may work - it's just that they haven't been tested. All pip packages are installed in a separate virtual environment (venv). You will need to ensure the appropriate python3-venv package is installed. 
 

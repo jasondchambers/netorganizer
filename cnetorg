@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+if [[ -z "${CNETORG_CONFIG_HOME}" ]]; then
+   (>&2 echo "Please set CNETORG_CONFIG_HOME environment variable before proceeding")
+   exit 1
+fi
+
+which docker > /dev/null 2>&1
+status=$?
+if [[ "${status}" -ne 0 ]]; then
+   (>&2 echo "Docker is not installed - please install then re-try.")
+   exit 1
+fi
+
+docker image ls | grep netorganizer > /dev/null 2>&1
+status=$?
+if [[ "${status}" -ne 0 ]]; then
+   (>&2 echo "The Docker image netorganizer could not be found - please build the image before proceeding (see README.md).")
+   exit 1
+fi
+
+docker run -v ${CNETORG_CONFIG_HOME}:/home/netorg -it --rm netorganizer $*
