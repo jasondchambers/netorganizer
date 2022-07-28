@@ -36,7 +36,7 @@ class KnownDevicesLoader:
         print(f'Loading known devices from {self.filename}')
         data = []
         with open(self.filename, encoding='utf8') as known_devices_file:
-            data = yaml.load_all(known_devices_file, Loader=yaml.FullLoader) # TODO buffered read using ruamel in future
+            data = yaml.load(known_devices_file, Loader=yaml.FullLoader) # TODO buffered read using ruamel in future
         yield from self.__load_data(data)
 
     def load_from_string(self,string) -> Generator[dict, None, None]:
