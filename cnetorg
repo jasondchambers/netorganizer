@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if [[ -z "${NETORG_HOME}" ]]; then
-   (>&2 echo "Please set NETORG_HOME environment variable before proceeding")
+if [[ -z "${CNETORG_CONFIG_HOME}" ]]; then
+   (>&2 echo "Please set CNETORG_CONFIG_HOME environment variable before proceeding")
    exit 1
 fi
 
@@ -19,4 +19,4 @@ if [[ "${status}" -ne 0 ]]; then
    exit 1
 fi
 
-docker run -v ${NETORG_HOME}:/home/netorg -it --rm netorganizer $*
+docker run -v ${CNETORG_CONFIG_HOME}:/home/netorg -it --rm netorganizer $*

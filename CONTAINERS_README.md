@@ -2,7 +2,7 @@
 
 ### 1. Installation
 
-Ensure the environment variable $NETORG_HOME is set. This is where the configuration file and the devices.yml will be stored.
+Ensure the environment variable $CNETORG_CONFIG_HOME is set. This is where the configuration file and the devices.yml will be stored. When you run the container, the path inside the container /home/netorg will be mapped to this directory.
 
 Ensure Docker is installed.
 
