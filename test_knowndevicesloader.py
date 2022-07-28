@@ -35,19 +35,19 @@ class TestKnownDevicesLoader(unittest.TestCase):
     def test_load_good_yaml(self):
         """Test well-formed YAML load."""
         known_devices_loader = KnownDevicesLoader()
-        devices = known_devices_loader.load_from_string(TestKnownDevicesLoader.generate_test_data())
+        devices = list(known_devices_loader.load_from_string(TestKnownDevicesLoader.generate_test_data()))
         self.inspect_output(devices)
 
     def test_load_bad_yaml(self):
         """Test invalid YAML load."""
         bad_yaml = "Not YAML at all\n"
         known_devices_loader = KnownDevicesLoader()
-        self.assertRaises(ValueError, known_devices_loader.load_from_string, bad_yaml)
+        self.assertRaises(ValueError, lambda data : list(known_devices_loader.load_from_string(data)), bad_yaml)
 
     def test_load_file_not_found(self):
         """Test load with file that does not exist."""
         known_devices_loader = KnownDevicesLoader(filename="/does/not/exist.yml")
-        devices = known_devices_loader.load()
+        devices = list(known_devices_loader.load())
         self.assertEqual(len(devices), 0)
 
     def test_load_good_yaml_from_file(self):
@@ -56,10 +56,9 @@ class TestKnownDevicesLoader(unittest.TestCase):
         temp_file = tempfile.NamedTemporaryFile()
         with open(temp_file.name, 'w', encoding='utf8', newline='') as yaml_fp:
             yaml_fp.write(TestKnownDevicesLoader.generate_test_data())
-            yaml_fp.close()
-            known_devices_loader = KnownDevicesLoader(filename=temp_file.name)
-            devices = known_devices_loader.load()
-            self.inspect_output(devices)
+        known_devices_loader = KnownDevicesLoader(filename=temp_file.name)
+        devices = list(known_devices_loader.load())
+        self.inspect_output(devices)
 
     def test_load_bad_yaml_from_file(self):
         """Test invalid YAML load from file."""
@@ -67,6 +66,5 @@ class TestKnownDevicesLoader(unittest.TestCase):
         temp_file = tempfile.NamedTemporaryFile()
         with open(temp_file.name, 'w', encoding='utf8', newline='') as yaml_fp:
             yaml_fp.write('Not YAML at all')
-            yaml_fp.close()
-            known_devices_loader = KnownDevicesLoader(filename=temp_file.name)
-            self.assertRaises(ValueError, known_devices_loader.load)
+        known_devices_loader = KnownDevicesLoader(filename=temp_file.name)
+        self.assertRaises(ValueError, lambda : list(known_devices_loader.load()))

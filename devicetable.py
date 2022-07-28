@@ -1,4 +1,5 @@
 """All the things associated with Loading, building and accessing a device table."""
+from collections import defaultdict
 import pandas as pd
 from pandas import DataFrame
 
@@ -11,7 +12,7 @@ class DeviceTable :
 class DeviceTableBuilder :
     """Efficiently Build a DeviceTable."""
     def __init__(self) -> None:
-        self.__devices_dict = {}
+        self.__devices_dict = defaultdict(lambda : {})
 
     @staticmethod
     def generate_new_record() -> dict:
@@ -24,14 +25,11 @@ class DeviceTableBuilder :
             'group': 'unclassified',
             'name': ''}
 
-    def get_details(self,mac) -> dict:
+    def get_details(self, mac) -> dict:
         """For a given device identified by it's MAC, return the details."""
-        if mac in self.__devices_dict:
-            return self.__devices_dict[mac]
-        self.__devices_dict[mac] = {}
         return self.__devices_dict[mac]
 
-    def set_details(self,mac,details) -> None:
+    def set_details(self, mac, details) -> None:
         """Set the details for a given device identified by it's MAC."""
         self.__devices_dict[mac] = details
 
@@ -59,7 +57,7 @@ class DeviceTableLoader :
     def load_known(self) -> None:
         """Load known devices into the DeviceTable."""
         known_devices = self.known_devices_loader.load()
-        for device in known_devices :
+        for device in known_devices:
             # All we know at this point is the device is known
             record = DeviceTableBuilder.generate_new_record()
             record['known'] = True
@@ -70,7 +68,7 @@ class DeviceTableLoader :
     def load_active_clients(self) -> None:
         """Load active clients into the DeviceTable."""
         active_clients = self.active_clients_loader.load()
-        for active_client in active_clients :
+        for active_client in active_clients:
             record = self.device_table_builder.get_details(active_client['mac'])
             if record:
                 # device has been loaded already
@@ -110,7 +108,7 @@ class DeviceTableLoader :
                     record['name'] = fixed_ip_reservation_details['name']
                     self.device_table_builder.set_details(mac, record)
 
-    def load_all(self) -> DataFrame :
+    def load_all(self) -> DataFrame:
         """Load everything into the DeviceTable."""
         self.load_known()
         self.load_active_clients()

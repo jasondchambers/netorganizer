@@ -6,5 +6,5 @@ if [[ -z "${NETORG_HOME}" ]] ; then
 fi
 
 cd $NETORG_HOME
-source .venv/bin/activate 
+. .venv/bin/activate 
 python3 -m unittest

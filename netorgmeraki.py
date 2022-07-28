@@ -149,7 +149,7 @@ class MerakiWrapper :
         self.vlan_id = ''
         self.vlan_subnet = ''
 
-    def initialize(self, chooser_func) :
+    def initialize(self, chooser_func) -> None:
         """Fully initialize the wrapper."""
         try :
             self.org_id = MerakiWrapper.find_org_id(self.dashboard)
@@ -207,7 +207,7 @@ class MerakiFixedIpReservationsGenerator:
                 print(f'MerakiFixedIpReservationsGenerator: skipping {mac}')
         return ip_reservations_dict
 
-class MerakiFixedIpReservationsLoader:
+class MerakiFixedIpReservationsLoader :
     """Load fixed IP reservations from Meraki."""
     # pylint: disable=too-few-public-methods
 
@@ -256,7 +256,7 @@ class MerakiNetworkMapper :
         """Generate fixed IP reservations."""
         return MerakiFixedIpReservationsGenerator.generate(self.device_table)
 
-    def show_diffs(self, old_fixed_ip_reservations, new_fixed_ip_reservations):
+    def show_diffs(self, old_fixed_ip_reservations, new_fixed_ip_reservations) -> None:
         """Show the before and after differences to the fixed IP reservations."""
         diff = DeepDiff(old_fixed_ip_reservations, new_fixed_ip_reservations)
         if diff:
@@ -286,7 +286,7 @@ class MerakiNetworkMapper :
         else:
             print("There are no changes to fixed IP reservations")
 
-    def update_fixed_ip_reservations(self) :
+    def update_fixed_ip_reservations(self) -> None:
         """Update fixed IP reservations in Meraki."""
         new_fixed_ip_reservations = self.generate_fixed_ip_reservations()
         meraki_wrapper = MerakiWrapper(self.config['api_key'])

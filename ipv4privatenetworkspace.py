@@ -8,7 +8,7 @@ class NetworkIsOutOfSpace(Exception):
 class Ipv4PrivateNetworkSpace :
     """IPv4 private network space."""
 
-    def __init__(self, cidr) :
+    def __init__(self, cidr) -> None:
         self.cidr = cidr
         self.ip_network = ipaddress.ip_network(cidr)
         if not self.ip_network.is_private:
@@ -20,15 +20,15 @@ class Ipv4PrivateNetworkSpace :
         """Return the set of all IPv4 addresses the space."""
         return self.__address_set
 
-    def get_used_set(self):
+    def get_used_set(self) -> set:
         """Return the set of IPv4 addresses that have been allocated."""
         return self.__used_set
 
-    def get_unused_set(self) :
+    def get_unused_set(self) -> set:
         """Return the set of IPv4 addresses that are available to be allocated."""
         return self.__address_set - self.__used_set
 
-    def allocate_address(self) :
+    def allocate_address(self) -> str:
         """Allocate an IP address."""
         try:
             return_address = self.get_unused_set().pop()
@@ -37,9 +37,9 @@ class Ipv4PrivateNetworkSpace :
         except KeyError as exc:
             raise NetworkIsOutOfSpace() from exc
 
-    def allocate_specific_address(self, ip_address) :
+    def allocate_specific_address(self, ip_address) -> str:
         """Allocate a specific IP address."""
-        if not ip_address in self.__address_set:
+        if ip_address not in self.__address_set:
             raise ValueError(f'specified ip_address not in {self.cidr}')
         if ip_address in self.__used_set:
             raise ValueError("specified ip_address already in use")

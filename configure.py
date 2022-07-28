@@ -8,19 +8,19 @@ import requests
 from netorgmeraki import MerakiWrapper
 from netorgsna import FailedToLogin, SnaSession
 
-class NetorgConfigurator:
+class NetorgConfigurator :
     """All things associated with configuring Netorg"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.__config = {}
         self.__get_api_key_func = NetorgConfigurator.default_get_api_key_func
         self.__choose_from_options_func = NetorgConfigurator.default_choose_from_options_func
 
-    def set_get_api_key_func(self, get_api_key_func):
+    def set_get_api_key_func(self, get_api_key_func) -> None:
         """Over-ride default_get_api_func() with a custom function"""
         self.__get_api_key_func = get_api_key_func
 
-    def set_choose_from_options_func(self, choose_from_options_func):
+    def set_choose_from_options_func(self, choose_from_options_func) -> None:
         """Over-ride default_choose_from_options_func() with a custom function"""
         self.__choose_from_options_func = choose_from_options_func
 
@@ -42,7 +42,7 @@ class NetorgConfigurator:
         # pylint: disable=expression-not-assigned
         """Present options to user and return their selection."""
         print(f'Multiple {thing}s found:')
-        [ print(f'{k} - {v}') for (k,v) in choices.items()]
+        [ print(f'{k} - {v}') for (k,v) in choices.items() ]
         while True:
             selection = input(f'Which {thing}? : ')
             if selection in choices:
@@ -105,14 +105,14 @@ class NetorgConfigurator:
         """Return the fully qualified config filename e.g. /a/b/.netorg.cfg"""
         directory = os.path.expanduser('~')
         filename = '.netorg.cfg'
-        return os.path.join(directory,filename)
+        return os.path.join(directory, filename)
 
     def load(self) -> None:
         """Load configuration."""
         config_filename = self.get_config_filename()
         print(f'Loading config file {config_filename}')
-        with open(config_filename, encoding='utf8') as json_file:
-            self.__config = json.load(json_file)
+        with open(config_filename, 'r', encoding='utf8') as netorg_config_file:
+            self.__config = json.load(netorg_config_file)
 
     def save(self) -> None:
         """Save configuration."""
@@ -148,6 +148,6 @@ class NetorgConfigurator:
         """Obtain the filename for where to find/store known devices"""
         default = 'devices.yml'
         device_yml_filename = input(f'Filename for where to find/store known devices [{default}]: ')
-        if not device_yml_filename :
+        if not device_yml_filename:
             device_yml_filename = default
         return device_yml_filename
