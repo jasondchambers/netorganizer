@@ -6,8 +6,8 @@ digraph netorg_structure {
 		style=filled
 		fillcolor=gray95
 	]
-    netorg -> { MerakiDeviceTableLoaderFactory NetorgConfigurator NetorgGenerator NetorgScanner MerakiNetworkMapper }
-    MerakiDeviceTableLoaderFactory -> { DeviceTableLoader KnownDevicesLoader MerakiActiveClientsLoader MerakiFixedIpReservationsLoader MerakiWrapper}
+    netorg -> { merakidevicetableloaderfactory NetorgConfigurator NetorgGenerator NetorgScanner MerakiNetworkMapper SnaAdapter }
+    merakidevicetableloaderfactory -> { DeviceTableLoader KnownDevicesLoader MerakiActiveClientsLoader MerakiFixedIpReservationsLoader MerakiWrapper}
     MerakiNetworkMapper -> { DeviceTable Ipv4PrivateNetworkSpace MerakiFixedIpReservationsGenerator MerakiWrapper }
     NetorgConfigurator -> { MerakiWrapper json }
     NetorgGenerator -> { DeviceTable }
@@ -15,8 +15,25 @@ digraph netorg_structure {
     KnownDevicesLoader -> { yaml }
     DeviceTableLoader -> { DeviceTableBuilder }
     DeviceTableBuilder -> { DeviceTable }
+    SnaAdapter -> { SnaHostGroupManager SnaSession }
+    SnaHostGroupManager -> { SnaSession }
     edge [dir=back arrowtail=diamond style=dashed]
     DeviceTable -> { DataFrame }
+
+    netorg [
+        label = <{<b>netorg</b> | 
+        + main()<br align="left"/>+ do_configure()<br align="left"/>+ do_generate()<br align="left"/>+ do_scan()<br align="left"/>+ do_organize()<br align="left"/>+ do_devicetable()<br align="left"/>+ do_pushchangestosna()<br align="left"/>}>
+    ]
+
+    SnaHostGroupManager [
+        label = <{<b>SnaHostGroupManager</b> | 
+        + push_changes()<br align="left"/>}>
+    ]
+
+    SnaSession [
+        label = <{<b>SnaSession</b> | 
+        + login()<br align="left"/>+ logout()<br align="left"/>}>
+    ]
 
     MerakiFixedIpReservationsGenerator [
         label = <{<b>MerakiFixedIpReservationsGenerator</b> | + generate()<br align="left"/>}>
@@ -26,8 +43,8 @@ digraph netorg_structure {
         label = <{<b>Ipv4PrivateNetworkSpace</b> | + allocate_address()<br align="left"/>+ allocate_specific_address()<br align="left"/>}>
     ]
 
-    MerakiDeviceTableLoaderFactory [
-        label = <{<b>MerakiDeviceTableLoaderFactory</b> | + create()<br align="left"/>}>
+    merakidevicetableloaderfactory [
+        label = <{<b>merakidevicetableloaderfactory</b> | + create()<br align="left"/>}>
     ]
     
     NetorgConfigurator[
@@ -52,5 +69,10 @@ digraph netorg_structure {
     
     DataFrame [
         label = <{pandas.DataFrame}>
+    ]
+
+    SnaAdapter [
+        label = <{<b>SnaAdapter</b> | 
+        + sync_with()<br align="left"/>}>
     ]
 }
