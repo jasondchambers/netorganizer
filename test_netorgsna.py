@@ -105,6 +105,42 @@ class TestSnaHostGroupManager(unittest.TestCase) :
         self.assertEqual(1,len(sna_hostgroup_manager.hostgroups_to_delete_set))
         self.assertIn('Speakers', sna_hostgroup_manager.hostgroups_to_delete_set)
 
+    def test_analyze_changes_update(self):
+        current_hostgroups = {
+            'lights': [
+                '192.168.129.61', 
+                '192.168.129.21',
+                '192.168.129.223',
+                '192.168.129.33',
+                '192.168.129.117'],
+            'unclassified': [
+                '192.168.128.61', 
+                '192.168.128.21',
+                '192.168.128.223',
+                '192.168.128.33',
+                '192.168.128.117']
+        }
+        new_hostgroups = {
+            'lights': [
+                '192.168.129.61', 
+                '192.168.129.21',
+                '192.168.129.223',
+                '192.168.129.33',
+                '192.168.129.170'], # Changed
+            'unclassified': [
+                '192.168.128.61', 
+                '192.168.128.21',
+                '192.168.128.223',
+                '192.168.128.33',
+                '192.168.128.170'] # Changed
+        }
+        sna_hostgroup_manager = SnaHostGroupManager(None)
+        sna_hostgroup_manager.analyze_changes(current_hostgroups,new_hostgroups)
+        self.assertEqual(0,len(sna_hostgroup_manager.hostgroups_to_create_set))
+        self.assertEqual(2,len(sna_hostgroup_manager.hostgroups_to_update_set))
+        self.assertIn('unclassified', sna_hostgroup_manager.hostgroups_to_update_set)
+        self.assertIn('lights', sna_hostgroup_manager.hostgroups_to_update_set)
+
     def test_get_group_children(self):
         """Test SnaHostGroupManager.get_group_children()."""
         inside_host_children = SnaHostGroupManager.get_group_children(
