@@ -189,6 +189,13 @@ class SnaHostGroupManager:
                     hostgroup = re.search(r"'(.*?)'", k, re.DOTALL).group()
                     hostgroup = hostgroup.strip("'")
                     update_set.add(hostgroup)
+            if 'values_changed' in diff:
+                print(diff['values_changed'])
+                print(type(diff['values_changed']))
+                for k in diff['values_changed'].keys():
+                    hostgroup = re.search(r"'(.*?)'", k, re.DOTALL).group()
+                    hostgroup = hostgroup.strip("'")
+                    update_set.add(hostgroup)
         return update_set
 
     def update_hostgroups(self, hostgroups_to_update_set, hostgroups_changes):
