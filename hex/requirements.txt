@@ -1,0 +1,4 @@
+pyyaml == 6.0
+meraki == 1.22.1
+pandas == 1.4.3
+deepdiff
